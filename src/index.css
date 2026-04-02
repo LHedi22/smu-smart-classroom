@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand:          #00c49a;
+  --color-brand-dark:     #009e7a;
+  --color-brand-light:    #33d4b0;
+  --color-surface:        #0b1428;
+  --color-surface-deep:   #05091a;
+  --color-surface-raised: #111e35;
+  --color-surface-border: #1e3050;
+
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-surface-deep text-slate-200 antialiased;
+    font-family: var(--font-sans);
+    margin: 0;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { @apply bg-surface-deep; }
+  ::-webkit-scrollbar-thumb { @apply bg-surface-border rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-slate-500; }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface rounded-xl border border-surface-border p-4;
+  }
+
+  .btn-primary {
+    @apply bg-brand text-white font-medium px-4 py-2 rounded-lg
+           transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary:hover:not(:disabled) {
+    @apply bg-brand-dark;
+  }
+
+  .btn-ghost {
+    @apply text-slate-400 px-3 py-2 rounded-lg transition-colors duration-150;
+  }
+  .btn-ghost:hover {
+    @apply text-slate-200 bg-surface-raised;
+  }
+}
