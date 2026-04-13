@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext'
 import { db }                  from '../../firebase'
 
 export default function RoomsGrid() {
-  const { profile: professor } = useAuth()
+  const { profile: professor, user } = useAuth()
   const [roomStatuses, setRoomStatuses] = useState({})
   const navigate                    = useNavigate()
 
@@ -14,15 +14,26 @@ export default function RoomsGrid() {
 
     const unsubs = Object.keys(professor.assignedRooms).map(roomId =>
       onValue(ref(db, `/classrooms/${roomId}/activeSession`), snap => {
+        const value = snap.exists() ? snap.val() : null
+        const mine =
+          value &&
+          (
+            (value.professorUid && user?.uid && value.professorUid === user.uid) ||
+            (
+              value.professorId != null &&
+              professor?.moodleUserId != null &&
+              Number(value.professorId) === Number(professor.moodleUserId)
+            )
+          )
         setRoomStatuses(prev => ({
           ...prev,
-          [roomId]: snap.exists() ? snap.val() : null,
+          [roomId]: mine ? value : null,
         }))
       })
     )
 
     return () => unsubs.forEach(u => u())
-  }, [professor?.assignedRooms])
+  }, [professor?.assignedRooms, professor?.moodleUserId, user?.uid])
 
   const rooms = Object.keys(professor?.assignedRooms ?? {})
   if (!rooms.length) return null

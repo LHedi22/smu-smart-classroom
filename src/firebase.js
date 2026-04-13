@@ -12,6 +12,13 @@ const firebaseConfig = {
   appId:             import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
+const requiredConfig = ['apiKey', 'authDomain', 'databaseURL', 'projectId']
+const missingConfig = requiredConfig.filter((key) => !firebaseConfig[key])
+
+if (missingConfig.length > 0) {
+  throw new Error(`Missing Firebase configuration: ${missingConfig.join(', ')}`)
+}
+
 const app = initializeApp(firebaseConfig)
 export const db   = getDatabase(app)
 export const auth = getAuth(app)

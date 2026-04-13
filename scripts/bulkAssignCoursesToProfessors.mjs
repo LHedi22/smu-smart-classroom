@@ -1,111 +1,24 @@
 /**
- * BULK ASSIGN: Populate Firebase with Courses & Rooms from Moodle
- * 
- * Problem: Flask syncs Moodle enrollments to React but NOT to Firebase
- * Solution: Bulk-assign all courses to their professors in Firebase
- * 
- * This script:
- * 1. Loads all professors from Firebase
- * 2. For each professor, extracts their Moodle courses
- * 3. Atomically assigns courses to professors using transactionHelpers
- * 4. Updates assignedRooms for each professor
+ * BULK ASSIGN (REAL DATA): Populate Firebase /courses using each professor's actual course list from Flask.
+ *
+ * Why this exists:
+ * - Previous script used hardcoded dummy mappings (wrong for real professors).
+ * - That caused wrong course ownership and wrong live sessions.
+ *
+ * Run:
+ *   node scripts/bulkAssignCoursesToProfessors.mjs            # dry run
+ *   DRY_RUN=false node scripts/bulkAssignCoursesToProfessors.mjs
  */
 
 import { initializeApp, cert } from "firebase-admin/app";
 import { getDatabase } from "firebase-admin/database";
 import { readFileSync, writeFileSync } from "fs";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-
-// Dummy Moodle course data (represents what Flask would return)
-// In production, would query Flask API
-const MOODLE_COURSES_BY_PROF_ID = {
-  13: [ // Ahmed Jallouli
-    { id: 101, code: "CS102", fullname: "Object Oriented Programming", schedule: [{ room: "D105", day: "Monday" }] },
-    { id: 102, code: "CS201", fullname: "Advanced Java", schedule: [{ room: "A101", day: "Wednesday" }] },
-  ],
-  14: [ // Fatma Trabelsi
-    { id: 103, code: "MATH201", fullname: "Calculus II", schedule: [{ room: "C310", day: "Tuesday" }] },
-    { id: 104, code: "MATH301", fullname: "Linear Algebra", schedule: [{ room: "D105", day: "Thursday" }] },
-  ],
-  15: [ // Hind Ferchichi
-    { id: 105, code: "CS301", fullname: "Database Design", schedule: [{ room: "B204", day: "Monday" }] },
-    { id: 106, code: "CS302", fullname: "SQL Programming", schedule: [{ room: "C310", day: "Friday" }] },
-  ],
-  16: [ // Mohamed Ben Salah
-    { id: 107, code: "ENG101", fullname: "English I", schedule: [{ room: "A101", day: "Monday" }] },
-    { id: 108, code: "ENG201", fullname: "English II", schedule: [{ room: "B204", day: "Wednesday" }] },
-  ],
-  17: [ // Rani Rekik
-    { id: 109, code: "PHYS101", fullname: "Physics I", schedule: [{ room: "D105", day: "Tuesday" }] },
-    { id: 110, code: "PHYS201", fullname: "Physics II", schedule: [{ room: "A101", day: "Thursday" }] },
-  ],
-  18: [ // Tarek Bouaziz
-    { id: 111, code: "CHEM101", fullname: "Chemistry I", schedule: [{ room: "B204", day: "Monday" }] },
-    { id: 112, code: "CHEM201", fullname: "Chemistry II", schedule: [{ room: "D105", day: "Wednesday" }] },
-  ],
-  19: [ // Leila Bouzid
-    { id: 113, code: "MATH101", fullname: "Algebra", schedule: [{ room: "C310", day: "Tuesday" }] },
-    { id: 114, code: "MATH102", fullname: "Geometry", schedule: [{ room: "A101", day: "Thursday" }] },
-  ],
-  20: [ // Rim Hammami
-    { id: 115, code: "STAT101", fullname: "Statistics I", schedule: [{ room: "A101", day: "Monday" }] },
-    { id: 116, code: "STAT201", fullname: "Statistics II", schedule: [{ room: "D105", day: "Friday" }] },
-  ],
-  21: [ // Chokri Ben Amor
-    { id: 117, code: "MATH401", fullname: "Advanced Calculus", schedule: [{ room: "C310", day: "Monday" }] },
-    { id: 118, code: "MATH402", fullname: "Differential Equations", schedule: [{ room: "B204", day: "Wednesday" }] },
-  ],
-  22: [ // Karim Gharbi
-    { id: 119, code: "ECE101", fullname: "Circuit Analysis", schedule: [{ room: "D105", day: "Tuesday" }] },
-    { id: 120, code: "ECE201", fullname: "Digital Systems", schedule: [{ room: "A101", day: "Thursday" }] },
-  ],
-  23: [ // Bilel Marzouk
-    { id: 121, code: "CS103", fullname: "Web Development", schedule: [{ room: "A101", day: "Monday" }] },
-    { id: 122, code: "CS203", fullname: "Full Stack", schedule: [{ room: "C310", day: "Friday" }] },
-  ],
-  24: [ // Adel Kaabia
-    { id: 123, code: "ISS101", fullname: "Information Systems", schedule: [{ room: "B204", day: "Tuesday" }] },
-    { id: 124, code: "ISS201", fullname: "Database ISS", schedule: [{ room: "D105", day: "Thursday" }] },
-  ],
-  25: [ // Sonia Khelifi
-    { id: 125, code: "CHEM301", fullname: "Organic Chemistry", schedule: [{ room: "C310", day: "Monday" }] },
-    { id: 126, code: "CHEM302", fullname: "Physical Chemistry", schedule: [{ room: "D105", day: "Wednesday" }] },
-  ],
-  26: [ // Ines Miled
-    { id: 127, code: "BIO101", fullname: "Biology I", schedule: [{ room: "A101", day: "Tuesday" }] },
-    { id: 128, code: "BIO201", fullname: "Biology II", schedule: [{ room: "B204", day: "Thursday" }] },
-  ],
-  27: [ // Youssef Mansouri
-    { id: 129, code: "ECON101", fullname: "Microeconomics", schedule: [{ room: "C310", day: "Monday" }] },
-    { id: 130, code: "ECON201", fullname: "Macroeconomics", schedule: [{ room: "A101", day: "Friday" }] },
-  ],
-  28: [ // Sofiane Dridi
-    { id: 131, code: "ECON301", fullname: "Econometrics", schedule: [{ room: "B204", day: "Tuesday" }] },
-    { id: 132, code: "ECON302", fullname: "Finance", schedule: [{ room: "D105", day: "Thursday" }] },
-  ],
-  29: [ // Amira Chebil
-    { id: 133, code: "ENG301", fullname: "Advanced English", schedule: [{ room: "A101", day: "Monday" }] },
-    { id: 134, code: "LANG101", fullname: "French", schedule: [{ room: "C310", day: "Wednesday" }] },
-  ],
-  30: [ // Wafa Jlassi
-    { id: 135, code: "LANG201", fullname: "German", schedule: [{ room: "D105", day: "Tuesday" }] },
-    { id: 136, code: "LANG301", fullname: "Spanish", schedule: [{ room: "B204", day: "Friday" }] },
-  ],
-  31: [ // Nabil Zouari
-    { id: 137, code: "PHYS301", fullname: "Quantum Mechanics", schedule: [{ room: "C310", day: "Monday" }] },
-    { id: 138, code: "PHYS302", fullname: "Thermodynamics", schedule: [{ room: "A101", day: "Thursday" }] },
-  ],
-  32: [ // Hatem Ferjani
-    { id: 139, code: "PHYS401", fullname: "Modern Physics", schedule: [{ room: "B204", day: "Tuesday" }] },
-    { id: 140, code: "PHYS402", fullname: "Astrophysics", schedule: [{ room: "D105", day: "Friday" }] },
-  ],
-};
 
 const serviceAccount = JSON.parse(readFileSync("./serviceAccountKey.json", "utf8"));
 
 const DB_URL = "https://smart-class-6f3a8-default-rtdb.europe-west1.firebasedatabase.app/";
-console.log("DB URL:", DB_URL);
+const FLASK_URL = process.env.FLASK_URL || "http://localhost:5000";
+const isDryRun = process.env.DRY_RUN !== "false";
 
 initializeApp({
   credential: cert(serviceAccount),
@@ -114,136 +27,165 @@ initializeApp({
 
 const db = getDatabase();
 
-let assigned = 0;
-let skipped = 0;
-let failed = 0;
-const report = [];
+function normalizeSchedule(schedule, fallbackRoom = "") {
+  if (!schedule) return [];
+
+  if (Array.isArray(schedule)) {
+    return schedule
+      .filter((slot) => slot && slot.day)
+      .map((slot) => ({
+        day: slot.day,
+        starttime: slot.starttime || slot.startTime || "09:00",
+        endtime: slot.endtime || slot.endTime || "10:30",
+        room: slot.room || fallbackRoom || "",
+        type: slot.type || "Lecture",
+      }))
+      .filter((slot) => slot.room);
+  }
+
+  if (schedule.days && Array.isArray(schedule.days) && schedule.startTime && schedule.endTime) {
+    return schedule.days
+      .map((day) => ({
+        day,
+        starttime: schedule.startTime,
+        endtime: schedule.endTime,
+        room: schedule.room || fallbackRoom || "",
+        type: schedule.type || "Lecture",
+      }))
+      .filter((slot) => slot.room);
+  }
+
+  return [];
+}
+
+async function fetchProfessorCourses(moodleUserId) {
+  const res = await fetch(`${FLASK_URL}/api/professors/${moodleUserId}/courses`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  if (!Array.isArray(data)) return [];
+  return data;
+}
 
 async function bulkAssign() {
-  console.log("📚 BULK ASSIGN: Populating Firebase with Courses & Rooms\n");
+  console.log("📚 BULK ASSIGN (REAL DATA): Courses & Rooms from Flask\n");
+  console.log(`Mode: ${isDryRun ? "🔍 DRY RUN (No changes)" : "🔧 APPLYING CHANGES"}`);
+  console.log(`Flask: ${FLASK_URL}\n`);
 
-  // Load all professors
-  const profsSnap = await db.ref('professors').once('value');
-  const allProfs = profsSnap.val() || {};
+  const profsSnap = await db.ref("professors").get();
+  const coursesSnap = await db.ref("courses").get();
+  const allProfs = profsSnap.exists() ? profsSnap.val() : {};
+  const existingCourses = coursesSnap.exists() ? coursesSnap.val() : {};
+  const professors = Object.entries(allProfs)
+    .map(([uid, prof]) => ({ uid, ...prof }))
+    .filter((p) => p.moodleUserId != null);
 
-  // Build map by Moodle ID
-  const moodleIdToUid = {};
-  Object.entries(allProfs).forEach(([uid, prof]) => {
-    if (prof.moodleUserId) {
-      moodleIdToUid[prof.moodleUserId] = { uid, ...prof };
+  let assigned = 0;
+  let skipped = 0;
+  let failed = 0;
+  const report = [];
+
+  for (const prof of professors) {
+    console.log(`\n👤 ${prof.name} (Moodle ID: ${prof.moodleUserId}, UID: ${prof.uid})`);
+
+    let courses;
+    try {
+      courses = await fetchProfessorCourses(prof.moodleUserId);
+    } catch (err) {
+      console.log(`   ❌ Could not fetch from Flask: ${err.message}`);
+      failed++;
+      continue;
     }
-  });
 
-  const isDryRun = process.env.DRY_RUN !== "false";
-  console.log("ENV DRY_RUN =", process.env.DRY_RUN);
-  console.log(`Mode: ${isDryRun ? "🔍 DRY RUN (No changes)" : "🔧 APPLYING FIXES"}\n`);
-
-  // Process each professor
-  for (const [moodleId, courses] of Object.entries(MOODLE_COURSES_BY_PROF_ID)) {
-    const profRecord = moodleIdToUid[moodleId];
-    if (!profRecord) {
-      console.log(`❌ Moodle ID ${moodleId}: Professor not found in Firebase`);
+    if (!courses.length) {
+      console.log("   ⚠ No courses returned from Flask");
       skipped++;
       continue;
     }
 
-    const { uid, name } = profRecord;
-    console.log(`\n👤 ${name} (ID: ${moodleId}, UID: ${uid})`);
-    console.log(`   Courses to assign: ${courses.length}`);
-
     const roomsToAssign = {};
-    const coursesToCreate = [];
+    const updates = {};
 
-    // Prepare assignments
     for (const course of courses) {
-      const courseId = course.code;
-      const room = course.schedule?.[0]?.room || "UNKNOWN";
+      const courseCode = String(course.shortname || course.code || course.id || "").trim();
+      if (!courseCode) continue;
 
-      console.log(`   - ${course.code}: ${course.fullname} (Room: ${room})`);
+      const existingCourse = existingCourses[courseCode] || {};
+      const existingRoom = existingCourse.room || "";
+      const existingSchedule = existingCourse.schedule || [];
+      const normalizedSchedule = normalizeSchedule(
+        course.schedule || existingSchedule,
+        course.room || existingRoom
+      );
+      for (const slot of normalizedSchedule) {
+        if (slot.room) roomsToAssign[slot.room] = true;
+      }
 
-      roomsToAssign[room] = true;
-      coursesToCreate.push({
-        courseId,
+      const room = normalizedSchedule[0]?.room || course.room || existingRoom || null;
+
+      updates[`courses/${courseCode}`] = {
+        code: courseCode,
+        name: course.fullname || course.name || courseCode,
+        moodleCourseId: course.id ?? null,
+        professorUid: prof.uid,
+        professorId: Number(prof.moodleUserId),
         room,
-        moodleId,
-        uid,
-        course,
-      });
+        schedule: normalizedSchedule,
+      };
+
+      console.log(`   - ${courseCode}: ${course.fullname || course.name || courseCode}${room ? ` (Room: ${room})` : ""}`);
+      assigned++;
     }
 
-    if (isDryRun) {
-      console.log(`   ✓ Would assign ${coursesToCreate.length} courses`);
-      console.log(`   ✓ Would add rooms: ${Object.keys(roomsToAssign).join(", ")}`);
-      assigned += coursesToCreate.length;
-    } else {
-      // Apply assignments
-      try {
-        // 1. Create/update courses
-        for (const c of coursesToCreate) {
-          await db.ref(`courses/${c.courseId}`).update({
-            code: c.course.code,
-            name: c.course.fullname,
-            professorUid: c.uid,
-            professorId: Number(c.moodleId),
-            room: c.room,
-            schedule: c.course.schedule || [],
-          });
-          console.log(`     ✅ Course ${c.courseId} assigned`);
-          assigned++;
-        }
+    updates[`professors/${prof.uid}/assignedRooms`] = roomsToAssign;
 
-        // 2. Update professor's assigned rooms
-        await db.ref(`professors/${uid}/assignedRooms`).set(roomsToAssign);
-        console.log(`     ✅ Rooms assigned: ${Object.keys(roomsToAssign).join(", ")}`);
+    if (!isDryRun) {
+      try {
+        await db.ref("/").update(updates);
+        console.log(`   ✅ Updated ${Object.keys(updates).length - 1} courses + assignedRooms`);
       } catch (err) {
-        console.log(`     ❌ Error: ${err.message}`);
+        console.log(`   ❌ Update failed: ${err.message}`);
         failed++;
+        continue;
       }
+    } else {
+      console.log(`   ✓ Would update ${Object.keys(updates).length - 1} courses + assignedRooms`);
     }
 
     report.push({
-      professor: name,
-      moodleId,
-      uid,
-      coursesAssigned: coursesToCreate.length,
+      professor: prof.name,
+      moodleId: prof.moodleUserId,
+      uid: prof.uid,
+      courses: courses.map((c) => c.shortname || c.code || c.id),
       rooms: Object.keys(roomsToAssign),
     });
   }
 
-  // Summary
   console.log(`\n${"=".repeat(60)}`);
   console.log("SUMMARY");
   console.log(`${"=".repeat(60)}`);
-  console.log(`Professors processed: ${Object.keys(moodleIdToUid).length}`);
-  console.log(`Courses assigned: ${assigned}`);
-  console.log(`Skipped: ${skipped}`);
+  console.log(`Professors considered: ${professors.length}`);
+  console.log(`Courses assigned/updated: ${assigned}`);
+  console.log(`Skipped (no courses): ${skipped}`);
   console.log(`Failed: ${failed}`);
 
-  if (isDryRun) {
-    console.log(`\n🔍 DRY RUN COMPLETE - No changes made`);
-    console.log(`Run with: DRY_RUN=false node scripts/bulkAssignCoursesToProfessors.mjs\n`);
-  } else {
-    console.log(`\n✨ BULK ASSIGNMENT COMPLETE`);
-    if (failed === 0) {
-      console.log(`✅ All courses assigned successfully!`);
-      console.log(`   Professors can now see their courses in dashboard\n`);
-    } else {
-      console.log(`⚠️  Some assignments failed. Check Firebase permissions\n`);
-    }
-  }
-
-  // Save report
   const reportText = report
-    .map(r => `${r.professor}\n  Moodle ID: ${r.moodleId}\n  Courses: ${r.coursesAssigned}\n  Rooms: ${r.rooms.join(", ")}\n`)
+    .map((r) => `${r.professor}\n  Moodle ID: ${r.moodleId}\n  UID: ${r.uid}\n  Courses: ${r.courses.join(", ")}\n  Rooms: ${r.rooms.join(", ")}\n`)
     .join("\n");
-
   writeFileSync("BULK_ASSIGN_REPORT.txt", reportText);
-  console.log("📋 Report saved to: BULK_ASSIGN_REPORT.txt\n");
+  console.log("\n📋 Report saved to: BULK_ASSIGN_REPORT.txt");
+
+  if (isDryRun) {
+    console.log("\n🔍 DRY RUN COMPLETE");
+    console.log("Run with: DRY_RUN=false node scripts/bulkAssignCoursesToProfessors.mjs");
+  } else if (failed === 0) {
+    console.log("\n✅ Real course assignment complete.");
+  }
 
   process.exit(failed > 0 ? 1 : 0);
 }
 
-bulkAssign().catch(err => {
-  console.error("❌ Error:", err.message);
+bulkAssign().catch((err) => {
+  console.error("❌ Fatal:", err.message);
   process.exit(1);
 });
+
