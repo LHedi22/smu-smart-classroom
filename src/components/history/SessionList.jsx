@@ -22,7 +22,10 @@ export default function SessionList({ sessions }) {
             <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
               <span className="flex items-center gap-1"><MapPin size={11} />{s.roomId}</span>
               <span>{s.date} · {s.startTime}–{s.endTime}</span>
-              <span className="flex items-center gap-1"><Users size={11} />{Math.round(s.attendanceRate ?? 0)}% present</span>
+              <span className="flex items-center gap-1">
+                <Users size={11} />
+                {s.attendanceRate != null ? `${Math.round(s.attendanceRate)}% present` : '— %'}
+              </span>
             </div>
           </div>
           <ChevronRight size={16} className="text-slate-600 flex-shrink-0" />

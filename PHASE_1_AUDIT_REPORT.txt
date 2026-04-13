@@ -1,0 +1,253 @@
+1️⃣ FIREBASE PROFESSOR RECORDS
+────────────────────────────────────────────────────────────
+Total professors in Firebase: 21
+✅ With moodleUserId: 21
+❌ Missing moodleUserId: 0
+
+Moodle ID → Firebase UID mapping:
+  ✅ 24 (Adel Kaabia) → pcNNioESJ3WYcVXEMoUUBWhyotY2
+  ✅ 13 (Ahmed Jallouli) → CxlxEW10RGOf5tEejDXikVQ051Y2
+  ✅ 29 (Amira Chebil) → X0o4mm0mjgWOOnv87BYUZeUgPBX2
+  ✅ 23 (Bilel Marzouk) → iLCGJuAAJeTdmHWd0kKaMUhPlrH3
+  ✅ 21 (Chokri Ben Amor) → DcbEcQBBW1fvYWOqnDJnLqdbXC82
+  ✅ 14 (Fatma Trabelsi) → ghwLF95XZnhiLq2gTMOf4qI751W2
+  ✅ 32 (Hatem Ferjani) → RCJINeIsjpXSzZi7N6YXmpHBgjv2
+  ✅ 15 (Hind Ferchichi) → su37gL71JgVbhaIzjybPwiB40Zq1
+  ✅ 26 (Ines Miled) → wRMPC9kcBfhjYFRlqhRFHkJBroK2
+  ✅ 22 (Karim Gharbi) → OktfnMBZINU9tStt5nhcfcAH5qZ2
+  ✅ 19 (Leila Bouzid) → XrefXlPzPBY0mWmAu3sP4w5QCV22
+  ✅ 16 (Mohamed Ben Salah) → 9Bl6jiWZtBZ48pbrdEtLgIbynDB3
+  ✅ 31 (Nabil Zouari) → TpfYKDd2ZESHtgUNNGAnHXJB3aW2
+  ✅ 17 (Rani Rekik) → h523mmeAhQWzb4AYYbixZH6woHv2
+  ✅ 20 (Rim Hammami) → rsuT4xyPk4NdpPGIwfQUBDzltl03
+  ✅ 28 (Sofiane Dridi) → U6woWZJzOxQhbnZe1sJe7pABgx02
+  ✅ 25 (Sonia Khelifi) → te2kLMKGV6Ne7Is2D22RhPtAwj62
+  ✅ 18 (Tarek Bouaziz) → Y55AMlV5uWOIQWVe0mXDpxWrzRh2
+  ✅ 30 (Wafa Jlassi) → rsIA3WGdfAXnOp4ttPEslWJnkz53
+  ✅ 27 (Youssef Mansouri) → Odysl2Wf9sdqWSaLTQPUgBnqXPF2
+
+
+2️⃣ COURSE ASSIGNMENTS
+────────────────────────────────────────────────────────────
+Total courses: 15
+  - With professorUid: 15
+  - With professorId: 0
+  - With BOTH: 0
+  - ❌ Unassigned: 0
+
+Courses assigned to each professor:
+  ❌ 24 (Adel Kaabia): NO COURSES ASSIGNED
+  ❌ 13 (Ahmed Jallouli): NO COURSES ASSIGNED
+  ❌ 29 (Amira Chebil): NO COURSES ASSIGNED
+  ❌ 23 (Bilel Marzouk): NO COURSES ASSIGNED
+  ❌ 21 (Chokri Ben Amor): NO COURSES ASSIGNED
+  ❌ 14 (Fatma Trabelsi): NO COURSES ASSIGNED
+  ❌ 32 (Hatem Ferjani): NO COURSES ASSIGNED
+  ❌ 15 (Hind Ferchichi): NO COURSES ASSIGNED
+  ❌ 26 (Ines Miled): NO COURSES ASSIGNED
+  ❌ 22 (Karim Gharbi): NO COURSES ASSIGNED
+  ❌ 19 (Leila Bouzid): NO COURSES ASSIGNED
+  ❌ 16 (Mohamed Ben Salah): NO COURSES ASSIGNED
+  ❌ 31 (Nabil Zouari): NO COURSES ASSIGNED
+  ❌ 17 (Rani Rekik): NO COURSES ASSIGNED
+  ❌ 20 (Rim Hammami): NO COURSES ASSIGNED
+  ❌ 28 (Sofiane Dridi): NO COURSES ASSIGNED
+  ❌ 25 (Sonia Khelifi): NO COURSES ASSIGNED
+  ❌ 18 (Tarek Bouaziz): NO COURSES ASSIGNED
+  ❌ 30 (Wafa Jlassi): NO COURSES ASSIGNED
+  ❌ 27 (Youssef Mansouri): NO COURSES ASSIGNED
+
+
+3️⃣ FIREBASE UID VALIDATION
+────────────────────────────────────────────────────────────
+Validating professors' Firebase UIDs:
+
+✅ All Firebase UIDs are valid and match professor records
+
+
+4️⃣ SESSIONS IN FIREBASE
+────────────────────────────────────────────────────────────
+Total sessions in Firebase: 810
+Sessions stored by professorId:
+  ❌ 24 (Adel Kaabia): NO SESSIONS
+  ❌ 13 (Ahmed Jallouli): NO SESSIONS
+  ❌ 29 (Amira Chebil): NO SESSIONS
+  ❌ 23 (Bilel Marzouk): NO SESSIONS
+  ❌ 21 (Chokri Ben Amor): NO SESSIONS
+  ❌ 14 (Fatma Trabelsi): NO SESSIONS
+  ❌ 32 (Hatem Ferjani): NO SESSIONS
+  ❌ 15 (Hind Ferchichi): NO SESSIONS
+  ❌ 26 (Ines Miled): NO SESSIONS
+  ❌ 22 (Karim Gharbi): NO SESSIONS
+  ❌ 19 (Leila Bouzid): NO SESSIONS
+  ❌ 16 (Mohamed Ben Salah): NO SESSIONS
+  ❌ 31 (Nabil Zouari): NO SESSIONS
+  ❌ 17 (Rani Rekik): NO SESSIONS
+  ❌ 20 (Rim Hammami): NO SESSIONS
+  ❌ 28 (Sofiane Dridi): NO SESSIONS
+  ❌ 25 (Sonia Khelifi): NO SESSIONS
+  ❌ 18 (Tarek Bouaziz): NO SESSIONS
+  ❌ 30 (Wafa Jlassi): NO SESSIONS
+  ❌ 27 (Youssef Mansouri): NO SESSIONS
+
+
+5️⃣ ASSIGNED ROOMS
+────────────────────────────────────────────────────────────
+Checking assignedRooms for each professor:
+  Adel Kaabia:
+     Firebase UID: pcNNioESJ3WYcVXEMoUUBWhyotY2
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Ahmed Jallouli:
+     Firebase UID: CxlxEW10RGOf5tEejDXikVQ051Y2
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Amira Chebil:
+     Firebase UID: X0o4mm0mjgWOOnv87BYUZeUgPBX2
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Bilel Marzouk:
+     Firebase UID: iLCGJuAAJeTdmHWd0kKaMUhPlrH3
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Chokri Ben Amor:
+     Firebase UID: DcbEcQBBW1fvYWOqnDJnLqdbXC82
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Fatma Trabelsi:
+     Firebase UID: ghwLF95XZnhiLq2gTMOf4qI751W2
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Hatem Ferjani:
+     Firebase UID: RCJINeIsjpXSzZi7N6YXmpHBgjv2
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Hind Ferchichi:
+     Firebase UID: su37gL71JgVbhaIzjybPwiB40Zq1
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Ines Miled:
+     Firebase UID: wRMPC9kcBfhjYFRlqhRFHkJBroK2
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Karim Gharbi:
+     Firebase UID: OktfnMBZINU9tStt5nhcfcAH5qZ2
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Leila Bouzid:
+     Firebase UID: XrefXlPzPBY0mWmAu3sP4w5QCV22
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Mohamed Ben Salah:
+     Firebase UID: 9Bl6jiWZtBZ48pbrdEtLgIbynDB3
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Nabil Zouari:
+     Firebase UID: TpfYKDd2ZESHtgUNNGAnHXJB3aW2
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Rani Rekik:
+     Firebase UID: h523mmeAhQWzb4AYYbixZH6woHv2
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Rim Hammami:
+     Firebase UID: rsuT4xyPk4NdpPGIwfQUBDzltl03
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Sofiane Dridi:
+     Firebase UID: U6woWZJzOxQhbnZe1sJe7pABgx02
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Sonia Khelifi:
+     Firebase UID: te2kLMKGV6Ne7Is2D22RhPtAwj62
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Tarek Bouaziz:
+     Firebase UID: Y55AMlV5uWOIQWVe0mXDpxWrzRh2
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Wafa Jlassi:
+     Firebase UID: rsIA3WGdfAXnOp4ttPEslWJnkz53
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+  Youssef Mansouri:
+     Firebase UID: Odysl2Wf9sdqWSaLTQPUgBnqXPF2
+     Assigned rooms: NONE
+     ⚠️  No assigned rooms!
+
+
+6️⃣ DATA CONSISTENCY CHECK
+────────────────────────────────────────────────────────────
+Comprehensive consistency check:
+
+⚠️  Adel Kaabia (Moodle ID: 24):
+   - No courses assigned
+⚠️  Ahmed Jallouli (Moodle ID: 13):
+   - No courses assigned
+⚠️  Amira Chebil (Moodle ID: 29):
+   - No courses assigned
+⚠️  Bilel Marzouk (Moodle ID: 23):
+   - No courses assigned
+⚠️  Chokri Ben Amor (Moodle ID: 21):
+   - No courses assigned
+⚠️  Fatma Trabelsi (Moodle ID: 14):
+   - No courses assigned
+⚠️  Hatem Ferjani (Moodle ID: 32):
+   - No courses assigned
+⚠️  Hind Ferchichi (Moodle ID: 15):
+   - No courses assigned
+⚠️  Ines Miled (Moodle ID: 26):
+   - No courses assigned
+⚠️  Karim Gharbi (Moodle ID: 22):
+   - No courses assigned
+⚠️  Leila Bouzid (Moodle ID: 19):
+   - No courses assigned
+⚠️  Mohamed Ben Salah (Moodle ID: 16):
+   - No courses assigned
+⚠️  Nabil Zouari (Moodle ID: 31):
+   - No courses assigned
+⚠️  Rani Rekik (Moodle ID: 17):
+   - No courses assigned
+⚠️  Rim Hammami (Moodle ID: 20):
+   - No courses assigned
+⚠️  Sofiane Dridi (Moodle ID: 28):
+   - No courses assigned
+⚠️  Sonia Khelifi (Moodle ID: 25):
+   - No courses assigned
+⚠️  Tarek Bouaziz (Moodle ID: 18):
+   - No courses assigned
+⚠️  Wafa Jlassi (Moodle ID: 30):
+   - No courses assigned
+⚠️  Youssef Mansouri (Moodle ID: 27):
+   - No courses assigned
+
+
+📋 SUMMARY
+────────────────────────────────────────────────────────────
+
+ROOT CAUSE ANALYSIS SUMMARY
+═════════════════════════════════════════════════════════════
+
+FINDINGS:
+⚠️  20 professors have data inconsistencies
+
+Total Professors: 21
+Total Courses: 15
+Total Sessions: 810
+
+Data Quality:
+- Courses with both IDs: 0
+- UID mismatches: 0
+- Unassigned courses: 0
+
+WHY PROFESSORS SEE "UPCOMING SESSIONS" BUT NO COURSES:
+❌ Multiple data consistency issues detected.
+
+RECOMMENDATION:
+1. Review list of affected professors below
+2. Check if Firebase UIDs were recreated (new login = new UID)
+3. Re-assign courses using current Firebase UIDs
+4. Verify sessions appear in professor dashboard
+
+═════════════════════════════════════════════════════════════
+  

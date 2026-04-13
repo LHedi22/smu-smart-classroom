@@ -12,16 +12,6 @@ const firebaseConfig = {
   appId:             import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-const isMock = import.meta.env.VITE_USE_MOCK === 'true'
-const hasConfig = firebaseConfig.apiKey && firebaseConfig.projectId
-
-let db   = null
-let auth = null
-
-if (!isMock || hasConfig) {
-  const app = initializeApp(firebaseConfig)
-  db   = getDatabase(app)
-  auth = getAuth(app)
-}
-
-export { db, auth }
+const app = initializeApp(firebaseConfig)
+export const db   = getDatabase(app)
+export const auth = getAuth(app)

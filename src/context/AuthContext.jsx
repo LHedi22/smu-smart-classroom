@@ -1,29 +1,84 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from '../firebase'
+// src/context/AuthContext.jsx
+import { createContext, useContext, useEffect, useState } from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { ref, get } from "firebase/database";
+import { auth, db } from "../firebase";
 
-const AuthContext = createContext(null)
-
-const isMock = import.meta.env.VITE_USE_MOCK === 'true'
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  // undefined = still loading, null = signed out, object = signed in
-  const [professor, setProfessor] = useState(undefined)
+  const [user, setUser]           = useState(null);  // Firebase Auth user
+  const [profile, setProfile]     = useState(null);  // /professors/{uid} data
+  const [isAdmin, setIsAdmin]     = useState(false);
+  const [loading, setLoading]     = useState(true);
 
   useEffect(() => {
-    if (isMock || !auth) {
-      const stored = sessionStorage.getItem('mock_professor')
-      setProfessor(stored ? JSON.parse(stored) : null)
-      return
-    }
-    return onAuthStateChanged(auth, user => setProfessor(user ?? null))
-  }, [])
+    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!firebaseUser) {
+        setUser(null);
+        setProfile(null);
+        setIsAdmin(false);
+        setLoading(false);
+        return;
+      }
+
+      // Check if admin (permission denied = not an admin, continue)
+      try {
+        const adminSnap = await get(ref(db, `/admins/${firebaseUser.uid}`));
+        if (adminSnap.exists()) {
+          console.log('✅ Admin detected:', firebaseUser.uid);
+          setUser(firebaseUser);
+          setIsAdmin(true);
+          setProfile(null);
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        console.log('⚠️ Admin check failed (expected if not admin):', err.message);
+      }
+
+      // Check if professor
+      const profSnap = await get(ref(db, `/professors/${firebaseUser.uid}`));
+      if (profSnap.exists()) {
+        console.log('✅ Professor detected:', firebaseUser.uid);
+        setUser(firebaseUser);
+        setProfile(profSnap.val());
+        setIsAdmin(false);
+        setLoading(false);
+        return;
+      }
+
+      // Authenticated but not registered
+      console.warn('⚠️ User authenticated but not registered as admin or professor:', firebaseUser.uid);
+      await signOut(auth);
+      setLoading(false);
+    });
+
+    return () => unsub();
+  }, []);
+
+  const logout = () => signOut(auth);
+
+  const status = loading    ? 'loading'
+    : !user                 ? 'unauthenticated'
+    : isAdmin               ? 'admin'
+    : profile               ? 'professor'
+    : 'not-approved';
 
   return (
-    <AuthContext.Provider value={{ professor, setProfessor }}>
-      {children}
+    <AuthContext.Provider value={{ user, profile, isAdmin, loading, status, logout }}>
+      {loading ? (
+        <div className="min-h-screen flex items-center justify-center bg-surface-deep">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-brand mb-4"></div>
+            <p className="text-slate-300">Loading...</p>
+          </div>
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
-  )
+  );
 }
 
-export const useProfessor = () => useContext(AuthContext)
+export const useAuth = () => useContext(AuthContext);
