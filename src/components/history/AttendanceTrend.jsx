@@ -1,10 +1,10 @@
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 
 export default function AttendanceTrend({ sessions }) {
-  const data = sessions.map(s => ({
-    date: s.date,
-    rate: Math.round(s.attendanceRate ?? 0),
-  }))
+  // Only chart sessions that have a real attendance rate
+  const data = sessions
+    .filter(s => s.attendanceRate != null)
+    .map(s => ({ date: s.date, rate: Math.round(s.attendanceRate) }))
 
   return (
     <div className="card">

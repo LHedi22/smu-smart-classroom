@@ -1,109 +1,110 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../firebase'
-import { useProfessor } from '../context/AuthContext'
-import { Cpu, AlertCircle } from 'lucide-react'
-
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
+// src/pages/Login.jsx
+import { useState, useEffect } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
-  const navigate  = useNavigate()
-  const { setProfessor } = useProfessor()
-  const [email,   setEmail]   = useState('')
-  const [password,setPassword]= useState('')
-  const [error,   setError]   = useState('')
-  const [loading, setLoading] = useState(false)
+  const [email, setEmail]       = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError]       = useState("");
+  const [loading, setLoading]   = useState(false);
+  const navigate                = useNavigate();
+  const { status }              = useAuth();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (status === 'admin') {
+      navigate('/admin', { replace: true })
+    } else if (status === 'professor') {
+      navigate('/', { replace: true })
+    } else if (status === 'not-approved') {
+      navigate('/not-approved', { replace: true })
+    }
+  }, [status, navigate])
 
-    if (USE_MOCK) {
-      const mockUser = { uid: 'mock', email, displayName: email.split('@')[0] }
-      sessionStorage.setItem('mock_professor', JSON.stringify(mockUser))
-      setProfessor(mockUser)
-      setTimeout(() => navigate('/'), 400)
-      return
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!email.endsWith("@smu.tn")) {
+      setError("Only @smu.tn accounts are allowed.");
+      return;
     }
 
+    setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password)
-      navigate('/')
+      await signInWithEmailAndPassword(auth, email, password);
+      // AuthContext will handle redirect automatically
     } catch (err) {
-      setError(err.code === 'auth/invalid-credential'
-        ? 'Invalid email or password.'
-        : err.message)
-      setLoading(false)
+      switch (err.code) {
+        case "auth/user-not-found":
+        case "auth/wrong-password":
+        case "auth/invalid-credential":
+          setError("Invalid email or password.");
+          break;
+        case "auth/too-many-requests":
+          setError("Too many attempts. Try again later.");
+          break;
+        default:
+          setError("Login failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-surface-deep flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
-          <div className="p-2 bg-brand/10 rounded-xl border border-brand/20">
-            <Cpu size={24} className="text-brand" />
-          </div>
-          <div>
-            <p className="font-mono text-xs text-slate-500 uppercase tracking-widest">SMU</p>
-            <h1 className="text-lg font-semibold text-slate-100 leading-tight">Smart Classroom</h1>
-          </div>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
+        <h1 className="text-2xl font-bold text-gray-800 mb-1">SMU Smart Campus</h1>
+        <p className="text-sm text-gray-500 mb-6">Sign in with your university account</p>
 
-        {/* Card */}
-        <div className="card">
-          <h2 className="text-slate-200 font-semibold mb-1">Professor sign-in</h2>
-          <p className="text-sm text-slate-500 mb-6">Use your SMU institutional email.</p>
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              University Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="yourname@smu.tn"
+              required
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
           {error && (
-            <div className="flex items-center gap-2 mb-4 p-3 rounded-lg bg-red-400/10 border border-red-500/30 text-red-400 text-sm">
-              <AlertCircle size={16} />
+            <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">
               {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <label className="flex flex-col gap-1.5">
-              <span className="text-xs text-slate-400 font-medium">Email</span>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="a.mejri@smu.tn"
-                className="bg-surface-raised border border-surface-border rounded-lg px-3 py-2 text-sm
-                           text-slate-200 placeholder-slate-600 outline-none
-                           focus:border-brand/50 focus:ring-1 focus:ring-brand/30 transition-colors"
-              />
-            </label>
-            <label className="flex flex-col gap-1.5">
-              <span className="text-xs text-slate-400 font-medium">Password</span>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="bg-surface-raised border border-surface-border rounded-lg px-3 py-2 text-sm
-                           text-slate-200 placeholder-slate-600 outline-none
-                           focus:border-brand/50 focus:ring-1 focus:ring-brand/30 transition-colors"
-              />
-            </label>
-            <button type="submit" disabled={loading} className="btn-primary mt-2">
-              {loading ? 'Signing in…' : 'Sign in'}
-            </button>
-          </form>
-
-          {USE_MOCK && (
-            <p className="mt-4 text-center text-xs text-amber-400/70">
-              Mock mode — any credentials accepted
             </p>
           )}
-        </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition disabled:opacity-50"
+          >
+            {loading ? "Signing in…" : "Sign In"}
+          </button>
+        </form>
       </div>
     </div>
-  )
+  );
 }

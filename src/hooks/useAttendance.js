@@ -1,6 +1,8 @@
 import { ref, update } from 'firebase/database'
 import { useObjectVal } from 'react-firebase-hooks/database'
 import { db } from '../firebase'
+import { useAuth } from '../context/AuthContext'
+import { hasRoomAccess, validateRoomId, logUnauthorizedAccess } from '../utils/roomAccess'
 
 const ALL_NAMES = ['Ahmed Ben Salah','Sarra Trabelsi','Mohamed Amine Jlassi','Rim Chaabane','Yassine Boughanmi','Amira Sassi','Karim Mansour','Leila Hamdi','Oussama Feriani','Nadia Khalfallah','Bilel Cherif','Hajer Arfaoui','Rami Ghodbane','Ines Zribi','Ayoub Haddad','Fatma Jouini','Khalil Dridi','Mariem Boukari','Seifeddine Mrabet','Cyrine Elleuch','Tarek Benzarti','Salma Bahri','Mehdi Karray','Asma Chihi','Nizar Achouri','Dorra Hamrouni','Wassim Selmi','Hana Tlili','Fares Mathlouthi','Yosra Agrebi','Amine Belhaj','Malek Triki']
 
@@ -34,6 +36,33 @@ function buildMockAttendance({ count, prefix, presentCount, startHour }) {
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
 
 export function useAttendance(roomId, sessionId) {
+  const { profile, user } = useAuth()
+  
+  // Validate room ID format
+  const { valid: roomIdValid, error: roomIdError } = validateRoomId(roomId)
+  if (!roomIdValid) {
+    return {
+      enrolled: 0,
+      students: [],
+      loading: false,
+      error: new Error(`Invalid room ID: ${roomIdError}`),
+      updateStudent: async () => { throw new Error('Invalid room ID') }
+    }
+  }
+
+  // Check authorization: does professor have access to this room?
+  if (!hasRoomAccess(profile, roomId)) {
+    logUnauthorizedAccess(user?.uid, roomId, 'fetch_attendance', new Date().toISOString())
+    return {
+      enrolled: 0,
+      students: [],
+      loading: false,
+      error: new Error(`Not authorized to access attendance for room ${roomId}`),
+      updateStudent: async () => { throw new Error('Not authorized to update attendance') }
+    }
+  }
+
+  // Authorization passed: fetch the data
   const [data, loading, error] = useObjectVal(
     USE_MOCK ? null : ref(db, `classrooms/${roomId}/attendance/${sessionId}`)
   )
