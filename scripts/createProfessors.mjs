@@ -218,14 +218,26 @@ const professors = [
 
 for (const prof of professors) {
   try {
-    // Create Firebase Auth account
-    const userRecord = await adminAuth.createUser({
-      email:         prof.email,
-      password:      prof.password,
-      displayName:   prof.name,
-    });
+    let userRecord;
+    try {
+      // Create Firebase Auth account if missing
+      userRecord = await adminAuth.createUser({
+        email:       prof.email,
+        password:    prof.password,
+        displayName: prof.name,
+      });
+      console.log(`✅ Created auth user: ${prof.email} → uid: ${userRecord.uid}`);
+    } catch (authErr) {
+      if (authErr.code === "auth/email-already-exists") {
+        // Reuse existing auth user and continue with DB upsert
+        userRecord = await adminAuth.getUserByEmail(prof.email);
+        console.log(`ℹ️ Reusing existing auth user: ${prof.email} → uid: ${userRecord.uid}`);
+      } else {
+        throw authErr;
+      }
+    }
 
-    // Write to /professors/{uid}
+    // Upsert /professors/{uid}
     await db.ref(`/professors/${userRecord.uid}`).set({
       name:          prof.name,
       email:         prof.email,
@@ -245,7 +257,7 @@ for (const prof of professors) {
       }
     });
 
-    console.log(`✅ Created: ${prof.email} → uid: ${userRecord.uid}`);
+    console.log(`✅ Upserted professor profile: ${prof.email} → uid: ${userRecord.uid}`);
   } catch (err) {
     console.error(`❌ Failed for ${prof.email}:`, err.message);
   }

@@ -27,6 +27,20 @@ function computeStatus(starttime, endtime) {
   return 'past'
 }
 
+function toHHMM(value) {
+  if (!value) return ''
+  if (typeof value === 'string' && value.includes('T')) {
+    const d = new Date(value)
+    if (!Number.isNaN(d.getTime())) {
+      return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+    }
+  }
+  if (typeof value === 'string' && value.includes(':')) {
+    return value.slice(0, 5)
+  }
+  return ''
+}
+
 export function useMoodleCourses() {
   const { profile: professor, user } = useAuth()
   const [courses, setCourses]           = useState([])
@@ -90,23 +104,66 @@ export function useMoodleCourses() {
 
     const unsubs = Object.keys(professor.assignedRooms).map(roomId =>
       onValue(ref(db, `/classrooms/${roomId}/activeSession`), snap => {
+        const value = snap.exists() ? snap.val() : null
+        const mine =
+          value &&
+          (
+            (value.professorUid && user?.uid && value.professorUid === user.uid) ||
+            (
+              value.professorId != null &&
+              professor?.moodleUserId != null &&
+              Number(value.professorId) === Number(professor.moodleUserId)
+            )
+          )
         setRoomSessions(prev => ({
           ...prev,
-          [roomId]: snap.exists() ? snap.val() : null,
+          [roomId]: mine ? value : null,
         }))
       })
     )
 
     return () => unsubs.forEach(u => u())
-  }, [professor?.assignedRooms])
+  }, [professor?.assignedRooms, professor?.moodleUserId, user?.uid])
 
   if (USE_MOCK) return { courses: MOCK_COURSES, allSessions: [], loading: false, error: null }
 
-  // ── Override status to 'live' if Firebase shows an active session in the room ─
-  const enriched = courses.map(c => ({
-    ...c,
-    status: roomSessions[c.roomId] != null ? 'live' : c.status,
-  }))
+  // ── Merge schedule slots with owned live sessions from Firebase ─
+  // If a room has an owned active session but no matching schedule slot for today,
+  // inject it so the dashboard cards/stats are consistent.
+  const byRoom = new Map(courses.map(c => [c.roomId, c]))
+  const merged = [...courses]
+
+  for (const [roomId, live] of Object.entries(roomSessions)) {
+    if (!live) continue
+    const startTime = toHHMM(live.startTime) || '00:00'
+    const endTime = toHHMM(live.endTime) || ''
+    const existing = byRoom.get(roomId)
+
+    if (existing) {
+      Object.assign(existing, {
+        status: 'live',
+        courseId: live.courseId ?? existing.courseId,
+        shortname: live.courseId ?? existing.shortname,
+        fullname: live.courseName ?? existing.fullname,
+      })
+      continue
+    }
+
+    merged.push({
+      id: live.sessionId ?? `live-${roomId}`,
+      courseId: live.courseId ?? roomId,
+      shortname: live.courseId ?? roomId,
+      fullname: live.courseName ?? 'Live session',
+      roomId,
+      startTime,
+      endTime: endTime || startTime,
+      type: live.type ?? 'Lecture',
+      status: 'live',
+      enrolled: 0,
+    })
+  }
+
+  const enriched = merged.sort((a, b) => a.startTime.localeCompare(b.startTime))
 
   return { courses: enriched, allSessions, loading, error }
 }

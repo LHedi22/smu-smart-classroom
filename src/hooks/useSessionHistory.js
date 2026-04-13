@@ -55,17 +55,23 @@ export function useSessionHistory(filters = {}) {
   }, [profile?.moodleUserId])
 
   // ── Also read Firebase /sessions (real attendanceRate after seeding) ──
-  const dbQuery = (!USE_MOCK && db && profile?.moodleUserId)
-    ? query(ref(db, 'sessions'), orderByChild('professorId'), equalTo(profile.moodleUserId))
+  const byProfessorIdQuery = (!USE_MOCK && db && profile?.moodleUserId)
+    ? query(ref(db, 'sessions'), orderByChild('professorId'), equalTo(Number(profile.moodleUserId)))
     : null
 
-  const [fbData, fbLoading, fbError] = useListVals(dbQuery, { keyField: 'id' })
+  const byProfessorUidQuery = (!USE_MOCK && db && user?.uid)
+    ? query(ref(db, 'sessions'), orderByChild('professorUid'), equalTo(user.uid))
+    : null
+
+  const [fbById, fbByIdLoading, fbByIdError] = useListVals(byProfessorIdQuery, { keyField: 'id' })
+  const [fbByUid, fbByUidLoading, fbByUidError] = useListVals(byProfessorUidQuery, { keyField: 'id' })
 
   if (USE_MOCK) return { sessions: MOCK_SESSIONS, loading: false, error: null }
 
   // Merge: Firebase data (with real attendance) enriches generated sessions.
   // attendanceRate: prefer Firebase value only if > 0 (guards against legacy seeds with 0)
-  const fbMap = Object.fromEntries((fbData ?? []).map(s => [s.id, s]))
+  const fbCombined = [...(fbById ?? []), ...(fbByUid ?? [])]
+  const fbMap = Object.fromEntries(fbCombined.map(s => [s.id, s]))
 
   let sessions = generated.map(s => {
     const fb = fbMap[s.id]
@@ -88,7 +94,7 @@ export function useSessionHistory(filters = {}) {
 
   return {
     sessions,
-    loading: genLoading || fbLoading,
-    error:   genError   || fbError || null,
+    loading: genLoading || fbByIdLoading || fbByUidLoading,
+    error:   genError   || fbByIdError || fbByUidError || null,
   }
 }

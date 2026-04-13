@@ -1,5 +1,5 @@
 // src/context/AuthContext.jsx
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { ref, get } from "firebase/database";
 import { auth, db } from "../firebase";
@@ -11,47 +11,75 @@ export function AuthProvider({ children }) {
   const [profile, setProfile]     = useState(null);  // /professors/{uid} data
   const [isAdmin, setIsAdmin]     = useState(false);
   const [loading, setLoading]     = useState(true);
+  const hasResolvedInitialAuth = useRef(false);
+
+  const getWithTimeout = (path, timeoutMs = 8000) =>
+    new Promise((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        reject(new Error(`Timeout reading ${path}`));
+      }, timeoutMs);
+
+      get(ref(db, path))
+        .then((snap) => {
+          clearTimeout(timeoutId);
+          resolve(snap);
+        })
+        .catch((err) => {
+          clearTimeout(timeoutId);
+          reject(err);
+        });
+    });
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!hasResolvedInitialAuth.current) {
+        setLoading(true);
+      }
       if (!firebaseUser) {
         setUser(null);
         setProfile(null);
         setIsAdmin(false);
+        hasResolvedInitialAuth.current = true;
         setLoading(false);
         return;
       }
 
-      // Check if admin (permission denied = not an admin, continue)
       try {
-        const adminSnap = await get(ref(db, `/admins/${firebaseUser.uid}`));
-        if (adminSnap.exists()) {
-          console.log('✅ Admin detected:', firebaseUser.uid);
-          setUser(firebaseUser);
-          setIsAdmin(true);
-          setProfile(null);
-          setLoading(false);
-          return;
+        // Check if admin (permission denied = not an admin, continue)
+        try {
+          const adminSnap = await getWithTimeout(`/admins/${firebaseUser.uid}`);
+          if (adminSnap.exists()) {
+            console.log('✅ Admin detected:', firebaseUser.uid);
+            setUser(firebaseUser);
+            setIsAdmin(true);
+            setProfile(null);
+            return;
+          }
+        } catch (err) {
+          console.log('⚠️ Admin check failed (expected if not admin):', err.message);
         }
-      } catch (err) {
-        console.log('⚠️ Admin check failed (expected if not admin):', err.message);
-      }
 
-      // Check if professor
-      const profSnap = await get(ref(db, `/professors/${firebaseUser.uid}`));
-      if (profSnap.exists()) {
-        console.log('✅ Professor detected:', firebaseUser.uid);
-        setUser(firebaseUser);
-        setProfile(profSnap.val());
-        setIsAdmin(false);
+        // Check if professor
+        try {
+          const profSnap = await getWithTimeout(`/professors/${firebaseUser.uid}`);
+          if (profSnap.exists()) {
+            console.log('✅ Professor detected:', firebaseUser.uid);
+            setUser(firebaseUser);
+            setProfile(profSnap.val());
+            setIsAdmin(false);
+            return;
+          }
+        } catch (err) {
+          console.error('❌ Professor check failed:', err.message);
+        }
+
+        // Authenticated but not registered
+        console.warn('⚠️ User authenticated but not registered as admin or professor:', firebaseUser.uid);
+        await signOut(auth);
+      } finally {
+        hasResolvedInitialAuth.current = true;
         setLoading(false);
-        return;
       }
-
-      // Authenticated but not registered
-      console.warn('⚠️ User authenticated but not registered as admin or professor:', firebaseUser.uid);
-      await signOut(auth);
-      setLoading(false);
     });
 
     return () => unsub();

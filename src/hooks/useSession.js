@@ -54,5 +54,16 @@ export function useSession(roomId) {
     }
   }
   
-  return { session: data, loading, error }
+  const sessionBelongsToProfessor =
+    data &&
+    (
+      (data.professorUid && user?.uid && data.professorUid === user.uid) ||
+      (
+        data.professorId != null &&
+        profile?.moodleUserId != null &&
+        Number(data.professorId) === Number(profile.moodleUserId)
+      )
+    )
+
+  return { session: sessionBelongsToProfessor ? data : null, loading, error }
 }
