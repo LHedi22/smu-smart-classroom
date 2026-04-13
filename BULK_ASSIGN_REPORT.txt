@@ -1,0 +1,119 @@
+Dr. Tarek Bouaziz
+  Moodle ID: 18
+  UID: 0VeXrmDbrnPw6zBR1uIc6U4p4vZ2
+  Courses: CS101
+  Rooms: A101
+
+Dr. Rim Hammami
+  Moodle ID: 20
+  UID: 0yZ7JuC1NiaN5ANKZH4HgNyTkaM2
+  Courses: MATH142
+  Rooms: A101
+
+Dr. Sofiane Dridi
+  Moodle ID: 28
+  UID: 19A96QhJJhXQ7Lpx0AgnaMQ9ODR2
+  Courses: ECO171
+  Rooms: A101
+
+Dr. Amira Chebil
+  Moodle ID: 29
+  UID: 1Xsr4YRAYSQkLV8x2OecqCfInbH2
+  Courses: ENG111
+  Rooms: C310
+
+Dr. Ahmed Jallouli
+  Moodle ID: 13
+  UID: 3OW9rC8wJaSKhmi6DT5CcWGOM6v2
+  Courses: ISS101, ISS196
+  Rooms: B204, A101
+
+Dr. Hind Ferchichi
+  Moodle ID: 15
+  UID: AIGaFSE3eDfLNIi4RCn7Qh18wIo2
+  Courses: ISS26
+  Rooms: B204
+
+Dr. Ines Miled
+  Moodle ID: 26
+  UID: ANUyMm9aU5SjgC3HUbWBEleD31C3
+  Courses: CHEM161
+  Rooms: C310
+
+Dr. Rania Rekik
+  Moodle ID: 17
+  UID: CpSkGhkKTVSCy5owVZ8tzPChrkc2
+  Courses: CS102
+  Rooms: A101
+
+Dr. Nabil Zouari
+  Moodle ID: 31
+  UID: If2GU1VOnMWGo8I19xF4I3GZfa22
+  Courses: PHYS151
+  Rooms: C310
+
+Dr. Mohamed Ben Salah
+  Moodle ID: 16
+  UID: KQyqnzkRVpdBY9gEPvDZVldAaVh2
+  Courses: CS101
+  Rooms: A101
+
+Dr. Wafa Jlassi
+  Moodle ID: 30
+  UID: MmIgN5EzBEVAzUwAZTy1qryRWTf2
+  Courses: ENG121
+  Rooms: C310
+
+Dr. Adel Kaabia
+  Moodle ID: 24
+  UID: QKz8E9T3EvXXWEMsrqdpd438bbU2
+  Courses: ECE143
+  Rooms: D105
+
+Dr. Chokri Ben Amor
+  Moodle ID: 21
+  UID: SDT2zlTuv2VmnovXYAEAATsBYWh1
+  Courses: MATH243
+  Rooms: D105
+
+Dr. Sonia Khelifi
+  Moodle ID: 25
+  UID: WP93llIjHWMlE6Ucl2ajnwFzmvo2
+  Courses: CHEM161
+  Rooms: C310
+
+Dr. Fatma Trabelsi
+  Moodle ID: 14
+  UID: ZO33uYL8nBSdFFEpuACdxQLlVOs2
+  Courses: ISS101
+  Rooms: B204, A101
+
+Dr. Bilel Marzouk
+  Moodle ID: 23
+  UID: aJ25NZWRjNWMKRZlpGMc32w2mgY2
+  Courses: ECE143
+  Rooms: D105
+
+Dr. Youssef Mansouri
+  Moodle ID: 27
+  UID: lxXMKHo62QgxN4lRQbz9ntj9Irm2
+  Courses: ECO171
+  Rooms: A101
+
+Dr. Karim Gharbi
+  Moodle ID: 22
+  UID: oHkqgdDvHDYvuQI0JQJ9IzZ1O9C2
+  Courses: ECE143
+  Rooms: D105
+
+Dr. Leila Bouzid
+  Moodle ID: 19
+  UID: oJtq55b8U9T1PcbpBh6hvmT5FXf1
+  Courses: MATH141
+  Rooms: B204
+
+Dr. Hatem Ferjani
+  Moodle ID: 32
+  UID: wervtGeJuHdmQ6PmVaKmXrtiPKl2
+  Courses: PHYS151
+  Rooms: C310
