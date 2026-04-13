@@ -4,19 +4,19 @@ import SessionList     from '../components/history/SessionList'
 import AttendanceTrend from '../components/history/AttendanceTrend'
 import LoadingSpinner  from '../components/shared/LoadingSpinner'
 import { useSessionHistory } from '../hooks/useSessionHistory'
-import { useProfessor } from '../context/AuthContext'
 
 export default function History() {
-  const { professor } = useProfessor()
-  const { sessions, loading } = useSessionHistory(professor?.uid)
   const [filter, setFilter] = useState({ search: '', from: '', to: '' })
+  const { sessions, loading } = useSessionHistory({
+    dateRange: filter.from || filter.to
+      ? { from: filter.from || undefined, to: filter.to || undefined }
+      : undefined,
+  })
 
   if (loading) return <LoadingSpinner />
 
   const filtered = sessions.filter(s => {
-    if (filter.search && !s.courseName.toLowerCase().includes(filter.search.toLowerCase())) return false
-    if (filter.from && s.date < filter.from) return false
-    if (filter.to   && s.date > filter.to)   return false
+    if (filter.search && !(s.courseName ?? s.courseId).toLowerCase().includes(filter.search.toLowerCase())) return false
     return true
   })
 

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Bell } from 'lucide-react'
-import { useProfessor } from '../../context/AuthContext'
+import { useAuth } from '../../context/AuthContext'
 import { formatClock } from '../../utils/formatTime'
 
 export default function TopBar() {
-  const { professor } = useProfessor()
+  const { profile: professor } = useAuth()
   const [time, setTime] = useState(formatClock())
 
   useEffect(() => {
@@ -12,7 +12,7 @@ export default function TopBar() {
     return () => clearInterval(id)
   }, [])
 
-  const displayName = professor?.displayName ?? professor?.email?.split('@')[0] ?? 'Professor'
+  const displayName = professor?.name ?? professor?.displayName ?? professor?.email?.split('@')[0] ?? 'Professor'
 
   return (
     <header className="h-14 flex-shrink-0 bg-surface border-b border-surface-border flex items-center justify-between px-4 lg:px-6">

@@ -12,16 +12,13 @@ const firebaseConfig = {
   appId:             import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-const isMock = import.meta.env.VITE_USE_MOCK === 'true'
-const hasConfig = firebaseConfig.apiKey && firebaseConfig.projectId
+const requiredConfig = ['apiKey', 'authDomain', 'databaseURL', 'projectId']
+const missingConfig = requiredConfig.filter((key) => !firebaseConfig[key])
 
-let db   = null
-let auth = null
-
-if (!isMock || hasConfig) {
-  const app = initializeApp(firebaseConfig)
-  db   = getDatabase(app)
-  auth = getAuth(app)
+if (missingConfig.length > 0) {
+  throw new Error(`Missing Firebase configuration: ${missingConfig.join(', ')}`)
 }
 
-export { db, auth }
+const app = initializeApp(firebaseConfig)
+export const db   = getDatabase(app)
+export const auth = getAuth(app)

@@ -1,0 +1,67 @@
+{
+  "rules": {
+    ".read": "auth != null || root.child('_system').child('allowUnauthenticatedRead').val() === true",
+    ".write": "false",
+    "_system": {
+      ".read": "false",
+      ".write": "false"
+    },
+    "professors": {
+      "$uid": {
+        ".read": "$uid === auth.uid || root.child('admins').child(auth.uid).exists() === true",
+        ".write": "$uid === auth.uid || root.child('admins').child(auth.uid).exists() === true",
+        ".validate": "newData.hasChildren(['name', 'email', 'moodleUserId'])"
+      }
+    },
+    "courses": {
+      "$courseId": {
+        ".read": "true",
+        ".write": "root.child('admins').child(auth.uid).exists() === true",
+        ".validate": "newData.hasChildren(['code', 'name'])"
+      }
+    },
+    "classrooms": {
+      "$roomId": {
+        ".read": "root.child('professors').child(auth.uid).child('assignedRooms').child($roomId).exists() || root.child('admins').child(auth.uid).exists() === true",
+        ".write": "root.child('admins').child(auth.uid).exists() === true",
+        "activeSession": {
+          ".read": "root.child('professors').child(auth.uid).child('assignedRooms').child($roomId).exists() || root.child('admins').child(auth.uid).exists() === true",
+          ".write": "false"
+        },
+        "sensors": {
+          ".read": "root.child('professors').child(auth.uid).child('assignedRooms').child($roomId).exists() || root.child('admins').child(auth.uid).exists() === true",
+          ".write": "false"
+        },
+        "devices": {
+          ".read": "root.child('professors').child(auth.uid).child('assignedRooms').child($roomId).exists() || root.child('admins').child(auth.uid).exists() === true",
+          ".write": "root.child('professors').child(auth.uid).child('assignedRooms').child($roomId).exists() || root.child('admins').child(auth.uid).exists() === true"
+        },
+        "attendance": {
+          "$sessionId": {
+            ".read": "root.child('professors').child(auth.uid).child('assignedRooms').child($roomId).exists() || root.child('admins').child(auth.uid).exists() === true",
+            ".write": "root.child('professors').child(auth.uid).child('assignedRooms').child($roomId).exists() || root.child('admins').child(auth.uid).exists() === true",
+            "students": {
+              "$studentId": {
+                ".validate": "newData.hasChildren(['name', 'present'])"
+              }
+            }
+          }
+        }
+      }
+    },
+    "sessions": {
+      "$sessionId": {
+        ".read": "root.child('professors').child(auth.uid).child('assignedRooms').child(data.child('roomId').val()).exists() || root.child('admins').child(auth.uid).exists() === true",
+        ".write": "root.child('admins').child(auth.uid).exists() === true",
+        ".validate": "newData.hasChildren(['id', 'courseId', 'roomId', 'date', 'startTime', 'professorId'])"
+      }
+    },
+    "admins": {
+      ".read": "true",
+      "$uid": {
+        ".read": "true",
+        ".write": "root.child('admins').child(auth.uid).exists() === true"
+      }
+    }
+  }
+}
