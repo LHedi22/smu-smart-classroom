@@ -104,9 +104,12 @@ const MOODLE_COURSES_BY_PROF_ID = {
 
 const serviceAccount = JSON.parse(readFileSync("./serviceAccountKey.json", "utf8"));
 
+const DB_URL = "https://smart-class-6f3a8-default-rtdb.europe-west1.firebasedatabase.app/";
+console.log("DB URL:", DB_URL);
+
 initializeApp({
   credential: cert(serviceAccount),
-  databaseURL: "https://smart-class-6f3a8-default-rtdb.europe-west1.firebasedatabase.app/"
+  databaseURL: DB_URL,
 });
 
 const db = getDatabase();
@@ -181,7 +184,7 @@ async function bulkAssign() {
             code: c.course.code,
             name: c.course.fullname,
             professorUid: c.uid,
-            professorId: c.moodleId,
+            professorId: Number(c.moodleId),
             room: c.room,
             schedule: c.course.schedule || [],
           });

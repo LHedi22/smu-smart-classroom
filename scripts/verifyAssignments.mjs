@@ -13,9 +13,12 @@ import { readFileSync } from "fs";
 
 const serviceAccount = JSON.parse(readFileSync("./serviceAccountKey.json", "utf8"));
 
+const DB_URL = "https://smart-class-6f3a8-default-rtdb.europe-west1.firebasedatabase.app/";
+console.log("DB URL:", DB_URL);
+
 initializeApp({
   credential: cert(serviceAccount),
-  databaseURL: "https://smart-class-6f3a8-default-rtdb.europe-west1.firebasedatabase.app/"
+  databaseURL: DB_URL,
 });
 
 const db = getDatabase();
@@ -31,8 +34,8 @@ async function verify() {
 
   const moodleToProf = {};
   Object.entries(allProfs).forEach(([uid, prof]) => {
-    if (prof.moodleUserId && TARGET_MOODLE_IDS.includes(prof.moodleUserId)) {
-      moodleToProf[prof.moodleUserId] = { uid, ...prof };
+    if (prof.moodleUserId && TARGET_MOODLE_IDS.includes(Number(prof.moodleUserId))) {
+      moodleToProf[Number(prof.moodleUserId)] = { uid, ...prof };
     }
   });
 
@@ -51,11 +54,11 @@ async function verify() {
 
   // Analyze courses
   Object.entries(allCourses).forEach(([courseId, course]) => {
-    if (course.professorId && TARGET_MOODLE_IDS.includes(course.professorId)) {
-      if (!coursesByProf[course.professorId]) {
-        coursesByProf[course.professorId] = [];
+    if (TARGET_MOODLE_IDS.includes(Number(course.professorId))) {
+      if (!coursesByProf[Number(course.professorId)]) {
+        coursesByProf[Number(course.professorId)] = [];
       }
-      coursesByProf[course.professorId].push(courseId);
+      coursesByProf[Number(course.professorId)].push(courseId);
 
       if (course.professorId) coursesWithProfId++;
       if (course.professorUid) coursesWithUid++;
