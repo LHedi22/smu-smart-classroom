@@ -1,8 +1,0 @@
-{
-  "admins": {
-    "df9fd908b95f8d537d52b696a5689a71": {
-      "email": "firebase-adminsdk-fbsvc@smu-smart-classroom.iam.gserviceaccount.com",
-      "role": "system_admin"
-    }
-  }
-}

@@ -9,8 +9,8 @@ export default function TodaySchedule({ courses, loading }) {
     <EmptyState icon={<CalendarDays size={32} />} title="No sessions today" description="Your schedule is clear for today." />
   )
   return (
-    <div className="flex flex-col gap-3">
+    <section className="flex flex-col gap-3" aria-label="Today's sessions">
       {courses.map(c => <SessionCard key={c.id} course={c} />)}
-    </div>
+    </section>
   )
 }

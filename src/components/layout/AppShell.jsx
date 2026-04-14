@@ -4,11 +4,12 @@ import TopBar  from './TopBar'
 
 export default function AppShell() {
   return (
-    <div className="flex h-full bg-surface-deep">
+    <div className="flex min-h-screen bg-[color:var(--bg-surface-muted)] text-[color:var(--fg-default)]">
+      <a href="#main-content" className="skip-link">Skip to main content</a>
       <Sidebar />
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <TopBar />
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
+        <main id="main-content" className="flex-1 overflow-y-auto p-4 md:p-6">
           <Outlet />
         </main>
       </div>

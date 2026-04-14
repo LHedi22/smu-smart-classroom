@@ -1,9 +1,19 @@
 // src/services/moodleApi.js
 import axios from "axios";
+import { auth } from "../firebase";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_FLASK_URL,
   timeout: 8000,
+});
+
+api.interceptors.request.use(async (config) => {
+  const user = auth.currentUser;
+  if (user) {
+    const token = await user.getIdToken();
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 // ── Professor ──────────────────────────────────────────────────
@@ -12,7 +22,7 @@ export const getProfessor = (moodleUserId) =>
   api.get(`/api/professors/${moodleUserId}`).then(r => r.data);
 
 export const getProfessorCourses = (moodleUserId) =>
-  api.get(`/api/professors/${moodleUserId}/courses`).then(r => r.data);
+  api.get('/api/moodle/courses').then(r => r.data);
 
 // ── Courses ────────────────────────────────────────────────────
 

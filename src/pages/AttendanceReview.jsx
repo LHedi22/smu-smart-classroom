@@ -19,12 +19,17 @@ function toDateStr(d) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
+function escapeCSV(v) {
+  const s = String(v ?? '')
+  return `"${s.replace(/"/g, '""')}"`
+}
+
 function exportCSV(students, sessionId) {
   const rows = [
     ['ID', 'Name', 'Present', 'Entry Time', 'Override', 'Note'],
-    ...students.map(s => [s.id, s.name, s.present ? 'Yes' : 'No', s.entryTime ?? '', s.manualOverride ? 'Yes' : 'No', s.overrideNote]),
+    ...students.map(s => [s.id, s.name, s.present ? 'Yes' : 'No', s.entryTime ?? '', s.manualOverride ? 'Yes' : 'No', s.overrideNote ?? '']),
   ]
-  const csv  = rows.map(r => r.join(',')).join('\n')
+  const csv  = rows.map(r => r.map(escapeCSV).join(',')).join('\n')
   const blob = new Blob([csv], { type: 'text/csv' })
   const url  = URL.createObjectURL(blob)
   const a    = document.createElement('a')

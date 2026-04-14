@@ -15,24 +15,24 @@ function UpcomingCard({ session }) {
   return (
     <button
       onClick={() => navigate(`/session/${session.roomId}`)}
-      className="card flex items-center gap-4 text-left hover:border-surface-border/80 transition-colors w-full"
+      className="card flex w-full items-center gap-4 rounded-[14px] text-left transition-transform duration-150 hover:-translate-y-0.5"
     >
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
-          {isLive && <Radio size={11} className="text-brand animate-pulse" />}
-          <span className={`text-xs font-medium ${isLive ? 'text-brand' : 'text-slate-500'}`}>
+          {isLive && <Radio size={11} className="animate-pulse text-[color:var(--accent-brand)]" />}
+          <span className={`text-xs font-medium ${isLive ? 'text-[color:var(--accent-brand)]' : 'text-[color:var(--fg-muted)]'}`}>
             {isLive ? 'Live now' : dayLabel}
           </span>
-          <span className="text-xs text-slate-600 font-mono">{session.startTime}–{session.endTime}</span>
+          <span className="font-mono text-xs text-[color:var(--fg-muted)]/80">{session.startTime}–{session.endTime}</span>
         </div>
-        <p className="text-slate-200 font-medium truncate">{session.courseName ?? session.courseId}</p>
-        <div className="flex items-center gap-1 mt-0.5 text-xs text-slate-500">
+        <p className="truncate font-semibold text-[color:var(--fg-default)]">{session.courseName ?? session.courseId}</p>
+        <div className="mt-0.5 flex items-center gap-1 text-xs text-[color:var(--fg-muted)]">
           <MapPin size={11} />{session.roomId}
-          <span className="ml-1 text-slate-600">·</span>
+          <span className="ml-1 text-[color:var(--fg-muted)]/80">·</span>
           <span className="ml-1">{session.type}</span>
         </div>
       </div>
-      <ArrowRight size={14} className="text-slate-600 flex-shrink-0" />
+      <ArrowRight size={14} className="flex-shrink-0 text-[color:var(--fg-muted)]" />
     </button>
   )
 }
@@ -46,10 +46,10 @@ export default function Home() {
   const futureSessions   = upcoming.filter(s => s.status === 'upcoming')
 
   return (
-    <div className="max-w-2xl mx-auto flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[min(1120px,100%)] flex-col gap-6">
       <div>
-        <h1 className="text-xl font-semibold text-slate-100">Today's Schedule</h1>
-        <p className="text-sm text-slate-500 mt-0.5">
+        <h1 className="text-[2rem] font-semibold leading-tight text-[color:var(--fg-default)]">Today&apos;s Schedule</h1>
+        <p className="mt-1 text-sm text-[color:var(--fg-muted)]">
           {new Date().toLocaleDateString('en-GB', {
             weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
           })}
@@ -57,8 +57,9 @@ export default function Home() {
       </div>
 
       {error && (
-        <div className="card border-red-500/30 bg-red-500/5 text-red-400 text-sm p-3">
-          Could not reach Flask API. Is it running?
+        <div className="card border-[color:var(--accent-danger)]/35 bg-[color:var(--accent-danger)]/10 p-3 text-sm text-[color:var(--accent-danger)]">
+          Flask API unreachable — schedule data unavailable.
+          Run <code className="rounded bg-[color:var(--accent-danger)]/20 px-1 py-0.5 font-mono text-xs">npm run dev:all</code> to start both servers.
         </div>
       )}
 
@@ -69,7 +70,7 @@ export default function Home() {
       {/* ── Upcoming Sessions (next 14 days) ── */}
       {!upLoading && (liveSessions.length > 0 || futureSessions.length > 0) && (
         <div className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-[color:var(--fg-muted)]">
             {liveSessions.length > 0 ? 'Live & Upcoming' : 'Upcoming Sessions'}
           </h2>
           {[...liveSessions, ...futureSessions].map(s => (

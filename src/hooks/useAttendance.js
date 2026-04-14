@@ -37,9 +37,15 @@ const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
 
 export function useAttendance(roomId, sessionId) {
   const { profile, user } = useAuth()
-  
-  // Validate room ID format
   const { valid: roomIdValid, error: roomIdError } = validateRoomId(roomId)
+  const hasAccess = roomIdValid && hasRoomAccess(profile, roomId)
+
+  // Hook always called — null ref disables subscription when unauthorized
+  const [data, loading, error] = useObjectVal(
+    USE_MOCK || !hasAccess ? null : ref(db, `classrooms/${roomId}/attendance/${sessionId}`)
+  )
+
+  // Validation/authorization checks after the hook call
   if (!roomIdValid) {
     return {
       enrolled: 0,
@@ -49,9 +55,7 @@ export function useAttendance(roomId, sessionId) {
       updateStudent: async () => { throw new Error('Invalid room ID') }
     }
   }
-
-  // Check authorization: does professor have access to this room?
-  if (!hasRoomAccess(profile, roomId)) {
+  if (!hasAccess && profile !== null) {
     logUnauthorizedAccess(user?.uid, roomId, 'fetch_attendance', new Date().toISOString())
     return {
       enrolled: 0,
@@ -61,11 +65,6 @@ export function useAttendance(roomId, sessionId) {
       updateStudent: async () => { throw new Error('Not authorized to update attendance') }
     }
   }
-
-  // Authorization passed: fetch the data
-  const [data, loading, error] = useObjectVal(
-    USE_MOCK ? null : ref(db, `classrooms/${roomId}/attendance/${sessionId}`)
-  )
 
   const updateStudent = (studentId, changes) => {
     if (USE_MOCK) return Promise.resolve()

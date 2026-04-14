@@ -4,6 +4,7 @@ import EnvironmentPanel   from '../components/live/EnvironmentPanel'
 import AttendancePanel    from '../components/live/AttendancePanel'
 import ControlsPanel      from '../components/live/ControlsPanel'
 import AlertsFeed         from '../components/live/AlertsFeed'
+import ErrorBoundary      from '../components/shared/ErrorBoundary'
 import { useSensors }     from '../hooks/useSensors'
 import { useDevices }     from '../hooks/useDevices'
 import { useAttendance }  from '../hooks/useAttendance'
@@ -21,24 +22,34 @@ export default function LiveSession() {
 
   return (
     <div className="flex flex-col gap-0">
-      <SessionHeader session={session} roomId={roomId} />
+      <ErrorBoundary>
+        <SessionHeader session={session} roomId={roomId} />
+      </ErrorBoundary>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
         {/* Column 1 — Environment */}
-        <EnvironmentPanel sensors={sensors} loading={sLoading} />
+        <ErrorBoundary>
+          <EnvironmentPanel sensors={sensors} loading={sLoading} />
+        </ErrorBoundary>
 
         {/* Column 2 — Attendance */}
-        <AttendancePanel
-          enrolled={enrolled}
-          students={students}
-          updateStudent={updateStudent}
-          sessionStatus={session?.status}
-        />
+        <ErrorBoundary>
+          <AttendancePanel
+            enrolled={enrolled}
+            students={students}
+            updateStudent={updateStudent}
+            sessionStatus={session?.status}
+          />
+        </ErrorBoundary>
 
         {/* Column 3 — Controls + Alerts */}
         <div className="flex flex-col gap-5">
-          <ControlsPanel devices={devices} loading={dLoading} toggleDevice={toggleDevice} />
-          <AlertsFeed alerts={alerts} />
+          <ErrorBoundary>
+            <ControlsPanel devices={devices} loading={dLoading} toggleDevice={toggleDevice} />
+          </ErrorBoundary>
+          <ErrorBoundary>
+            <AlertsFeed alerts={alerts} />
+          </ErrorBoundary>
         </div>
       </div>
     </div>

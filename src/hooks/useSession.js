@@ -14,9 +14,15 @@ const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
 
 export function useSession(roomId) {
   const { profile, user } = useAuth()
-  
-  // Validate room ID format
   const { valid: roomIdValid, error: roomIdError } = validateRoomId(roomId)
+  const hasAccess = roomIdValid && hasRoomAccess(profile, roomId)
+
+  // Hook always called — null ref disables subscription when unauthorized
+  const [data, loading, error] = useObjectVal(
+    USE_MOCK || !hasAccess ? null : ref(db, `classrooms/${roomId}/activeSession`)
+  )
+
+  // Validation/authorization checks after the hook call
   if (!roomIdValid) {
     return {
       session: null,
@@ -24,9 +30,7 @@ export function useSession(roomId) {
       error: new Error(`Invalid room ID: ${roomIdError}`)
     }
   }
-  
-  // Check authorization: does professor have access to this room?
-  if (!hasRoomAccess(profile, roomId)) {
+  if (!hasAccess && profile !== null) {
     logUnauthorizedAccess(user?.uid, roomId, 'fetch_active_session', new Date().toISOString())
     return {
       session: null,
@@ -34,12 +38,7 @@ export function useSession(roomId) {
       error: new Error(`Not authorized to access room ${roomId}`)
     }
   }
-  
-  // Authorization passed: fetch the data
-  const [data, loading, error] = useObjectVal(
-    USE_MOCK ? null : ref(db, `classrooms/${roomId}/activeSession`)
-  )
-  
+
   if (USE_MOCK) {
     const course = MOCK_COURSES[roomId] ?? { courseId: roomId, courseName: roomId, startTime: new Date().toISOString(), status: 'upcoming' }
     return {
@@ -53,7 +52,7 @@ export function useSession(roomId) {
       error: null,
     }
   }
-  
+
   const sessionBelongsToProfessor =
     data &&
     (

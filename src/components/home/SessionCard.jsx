@@ -9,17 +9,17 @@ export default function SessionCard({ course }) {
   const badgeLabel   = { live: 'Live', upcoming: 'Upcoming', completed: 'Done' }[course.status] ?? course.status
 
   return (
-    <div className="card flex items-start gap-4 hover:border-surface-border/80 transition-colors">
+    <article className="card flex items-start gap-4 rounded-[14px] transition-transform duration-150 hover:-translate-y-0.5">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <Badge variant={badgeVariant}>
             {course.status === 'live' && <Radio size={10} className="animate-pulse" />}
             {badgeLabel}
           </Badge>
-          <span className="text-xs text-slate-500 font-mono">{course.shortname}</span>
+          <span className="text-xs text-[color:var(--fg-muted)] font-mono">{course.shortname}</span>
         </div>
-        <p className="text-slate-200 font-medium truncate">{course.fullname}</p>
-        <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-500">
+        <p className="truncate text-[1rem] font-semibold text-[color:var(--fg-default)]">{course.fullname}</p>
+        <div className="mt-1.5 flex flex-wrap items-center gap-3 text-xs text-[color:var(--fg-muted)]">
           <span className="flex items-center gap-1"><MapPin size={11} />{course.roomId}</span>
           <span className="flex items-center gap-1"><Users size={11} />{course.enrolled} students</span>
           <span className="font-mono">{course.startTime} – {course.endTime}</span>
@@ -28,15 +28,15 @@ export default function SessionCard({ course }) {
       {course.status !== 'completed' && (
         <button
           onClick={() => navigate(`/session/${course.roomId}`)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex-shrink-0
+          className={`flex h-11 shrink-0 items-center gap-1.5 rounded-[10px] px-3 text-sm font-medium transition-all duration-150
             ${course.status === 'live'
-              ? 'bg-brand text-white hover:bg-brand-dark'
-              : 'bg-surface-raised text-slate-300 hover:bg-surface-border'}`}
+              ? 'bg-[color:var(--accent-brand)] text-white hover:bg-[color:var(--accent-brand)]/90'
+              : 'bg-[color:var(--bg-surface-muted)] text-[color:var(--fg-default)] hover:bg-[color:var(--border-muted)]'}`}
         >
           {course.status === 'live' ? 'Join' : 'Open'}
           <ArrowRight size={14} />
         </button>
       )}
-    </div>
+    </article>
   )
 }

@@ -1,15 +1,15 @@
 const variants = {
-  good:     'bg-emerald-400/10 text-emerald-400 border border-emerald-500/30',
-  warn:     'bg-amber-400/10  text-amber-400  border border-amber-500/30',
-  critical: 'bg-red-400/10    text-red-400    border border-red-500/30',
-  live:     'bg-brand/10      text-brand      border border-brand/30',
-  info:     'bg-blue-400/10   text-blue-400   border border-blue-500/30',
-  default:  'bg-slate-700/50  text-slate-300  border border-slate-600/30',
+  good: 'border border-[color:var(--accent-positive)]/35 bg-[color:var(--accent-positive)]/10 text-[color:var(--accent-positive)]',
+  warn: 'border border-[color:var(--accent-warning)]/40 bg-[color:var(--accent-warning)]/15 text-[color:var(--fg-default)]',
+  critical: 'border border-[color:var(--accent-danger)]/35 bg-[color:var(--accent-danger)]/10 text-[color:var(--accent-danger)]',
+  live: 'border border-[color:var(--accent-brand)]/35 bg-[color:var(--accent-brand)]/10 text-[color:var(--accent-brand)]',
+  info: 'border border-[color:var(--accent-info)]/35 bg-[color:var(--accent-info)]/10 text-[color:var(--accent-info)]',
+  default: 'border border-[color:var(--border-muted)] bg-[color:var(--bg-surface-muted)] text-[color:var(--fg-muted)]',
 }
 
 export default function Badge({ variant = 'default', children, className = '' }) {
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${variants[variant] ?? variants.default} ${className}`}>
+    <span className={`inline-flex min-h-6 items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${variants[variant] ?? variants.default} ${className}`}>
       {children}
     </span>
   )
