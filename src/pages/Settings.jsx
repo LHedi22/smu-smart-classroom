@@ -2,22 +2,45 @@ import { useState } from 'react'
 import { signOut } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 import { LogOut } from 'lucide-react'
-import { auth } from '../firebase'
+import { auth, db } from '../firebase'
+import { ref, update } from 'firebase/database'
+import { useAuth } from '../context/AuthContext'
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
 
 export default function Settings() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [thresholds, setThresholds] = useState({
     tempWarn: 26, tempCrit: 32,
     humWarn: 60,  humCrit: 75,
     co2Warn: 700, co2Crit: 1000,
     noiseWarn: 65, noiseCrit: 80,
   })
+  const [saving, setSaving] = useState(false)
+  const [saved,  setSaved]  = useState(false)
 
   const handleSignOut = async () => {
     if (!USE_MOCK) await signOut(auth)
     navigate('/login')
+  }
+
+  const handleSave = async () => {
+    if (USE_MOCK || !user) {
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2000)
+      return
+    }
+    setSaving(true)
+    try {
+      await update(ref(db, `professors/${user.uid}/settings`), { thresholds })
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2000)
+    } catch (err) {
+      console.error('[Settings] Failed to save thresholds:', err)
+    } finally {
+      setSaving(false)
+    }
   }
 
   const Field = ({ label, field }) => (
@@ -62,7 +85,9 @@ export default function Settings() {
             <Field label="Critical above" field="noiseCrit" />
           </div>
         </div>
-        <button className="btn-primary mt-2">Save thresholds</button>
+        <button onClick={handleSave} disabled={saving} className="btn-primary mt-2">
+          {saving ? 'Saving…' : saved ? 'Saved ✓' : 'Save thresholds'}
+        </button>
       </div>
 
       {/* Sign out */}

@@ -1,6 +1,6 @@
 {
   "rules": {
-    ".read": "auth != null || root.child('_system').child('allowUnauthenticatedRead').val() === true",
+    ".read": "false",
     ".write": "false",
     "_system": {
       ".read": "false",
@@ -32,6 +32,10 @@
           ".read": "root.child('professors').child(auth.uid).child('assignedRooms').child($roomId).exists() || root.child('admins').child(auth.uid).exists() === true",
           ".write": "false"
         },
+        "alerts": {
+          ".read": "root.child('professors').child(auth.uid).child('assignedRooms').child($roomId).exists() || root.child('admins').child(auth.uid).exists() === true",
+          ".write": "false"
+        },
         "devices": {
           ".read": "root.child('professors').child(auth.uid).child('assignedRooms').child($roomId).exists() || root.child('admins').child(auth.uid).exists() === true",
           ".write": "root.child('professors').child(auth.uid).child('assignedRooms').child($roomId).exists() || root.child('admins').child(auth.uid).exists() === true"
@@ -50,18 +54,23 @@
       }
     },
     "sessions": {
+      ".indexOn": ["professorId", "professorUid", "roomId"],
       "$sessionId": {
-        ".read": "root.child('professors').child(auth.uid).child('assignedRooms').child(data.child('roomId').val()).exists() || root.child('admins').child(auth.uid).exists() === true",
+        ".read": "auth != null && (root.child('admins').child(auth.uid).exists() === true || data.child('professorUid').val() === auth.uid || data.child('professorId').val() == root.child('professors').child(auth.uid).child('moodleUserId').val())",
         ".write": "root.child('admins').child(auth.uid).exists() === true",
         ".validate": "newData.hasChildren(['id', 'courseId', 'roomId', 'date', 'startTime', 'professorId'])"
       }
     },
     "admins": {
-      ".read": "true",
+      ".read": "auth != null && root.child('admins').child(auth.uid).exists() === true",
       "$uid": {
-        ".read": "true",
+        ".read": "auth != null && root.child('admins').child(auth.uid).exists() === true",
         ".write": "root.child('admins').child(auth.uid).exists() === true"
       }
+    },
+    "pendingProfessors": {
+      ".read": "root.child('admins').child(auth.uid).exists() === true",
+      ".write": "root.child('admins').child(auth.uid).exists() === true"
     }
   }
 }

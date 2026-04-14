@@ -10,6 +10,11 @@ import { MOCK_SESSIONS } from '../data/mockSessions'
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
 
+const isPermissionDeniedError = (error) => {
+  if (!error) return false
+  return error.code === 'PERMISSION_DENIED' || error.code === 'permission_denied' || /permission_denied/i.test(error.message || '')
+}
+
 /**
  * Returns all past sessions for the logged-in professor.
  * Generated from Flask schedule data, enriched with real attendanceRate
@@ -92,9 +97,11 @@ export function useSessionHistory(filters = {}) {
   if (dateRange?.from) sessions = sessions.filter(s => s.date >= dateRange.from)
   if (dateRange?.to)   sessions = sessions.filter(s => s.date <= dateRange.to)
 
+  const fbError = [fbByIdError, fbByUidError].find(err => err && !isPermissionDeniedError(err))
+
   return {
     sessions,
     loading: genLoading || fbByIdLoading || fbByUidLoading,
-    error:   genError   || fbByIdError || fbByUidError || null,
+    error:   genError   || fbError || null,
   }
 }

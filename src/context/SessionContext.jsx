@@ -13,4 +13,4 @@ export function SessionProvider({ children }) {
   )
 }
 
-export const useSession = () => useContext(SessionContext)
+export const useActiveRoom = () => useContext(SessionContext)

@@ -39,34 +39,34 @@ export default function RoomsGrid() {
   if (!rooms.length) return null
 
   return (
-    <div className="card flex flex-col gap-3">
-      <p className="text-sm font-medium text-slate-400">My Rooms</p>
-      <div className="grid grid-cols-2 gap-3">
+    <section className="card flex flex-col gap-3" aria-label="Assigned rooms">
+      <p className="text-sm font-medium uppercase tracking-wide text-[color:var(--fg-muted)]">My Rooms</p>
+      <div className="cq-grid-2">
         {rooms.map(roomId => {
           const isLive = roomStatuses[roomId] != null
           return (
             <button
               key={roomId}
               onClick={() => navigate(`/session/${roomId}`)}
-              className={`rounded-xl p-4 text-left transition border
+              className={`rounded-[14px] border p-4 text-left transition-all duration-150 hover:-translate-y-0.5
                 ${isLive
-                  ? 'border-red-500/30 bg-red-500/5 hover:bg-red-500/10'
-                  : 'border-slate-700/50 bg-slate-800/50 hover:bg-slate-700/50'
+                  ? 'border-[color:var(--accent-danger)]/35 bg-[color:var(--accent-danger)]/8 hover:bg-[color:var(--accent-danger)]/12'
+                  : 'border-[color:var(--border-muted)] bg-[color:var(--bg-surface-muted)] hover:bg-[color:var(--bg-surface)]'
                 }`}
             >
-              <p className="font-bold text-slate-100 text-lg">{roomId}</p>
-              <p className={`text-xs mt-1 flex items-center gap-1.5
-                ${isLive ? 'text-red-400' : 'text-slate-500'}`}
+              <p className="text-lg font-semibold text-[color:var(--fg-default)]">{roomId}</p>
+              <p className={`mt-1 flex items-center gap-1.5 text-xs
+                ${isLive ? 'text-[color:var(--accent-danger)]' : 'text-[color:var(--fg-muted)]'}`}
               >
                 {isLive
-                  ? <><span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse inline-block" /> Session active</>
-                  : <><span className="w-1.5 h-1.5 bg-slate-600 rounded-full inline-block" /> Available</>
+                  ? <><span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-[color:var(--accent-danger)]" /> Session active</>
+                  : <><span className="inline-block h-1.5 w-1.5 rounded-full bg-[color:var(--fg-muted)]/65" /> Available</>
                 }
               </p>
             </button>
           )
         })}
       </div>
-    </div>
+    </section>
   )
 }

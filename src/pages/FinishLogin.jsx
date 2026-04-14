@@ -53,10 +53,11 @@ export default function FinishLogin() {
         const pendingSnap = await get(ref(db, `pendingProfessors/${emailKey}`))
 
         if (pendingSnap.exists()) {
+          const pending = pendingSnap.val()
           await set(ref(db, `professors/${user.uid}`), {
-            ...pendingSnap.val(),
+            ...pending,
             email:        user.email,
-            moodleUserId: null,
+            moodleUserId: pending.moodleUserId ?? null,
             createdAt:    new Date().toISOString(),
             settings: {
               thresholds: {

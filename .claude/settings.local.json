@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat c:/Users/lenovo/smu-flask/routes/*.py)",
+      "Bash(python3 -c ':*)",
+      "Bash(node -e \"const p = JSON.parse\\(require\\('fs'\\).readFileSync\\('package.json'\\)\\); console.log\\(p.scripts['dev:all']\\)\")",
+      "Bash(node -e \"const p=JSON.parse\\(require\\('fs'\\).readFileSync\\('package.json'\\)\\); console.log\\(p.scripts['dev:all']\\)\")",
+      "Bash(curl -s http://localhost:5000/)",
+      "Bash(curl -s http://localhost:5000/api/professors/1/courses)",
+      "Bash(curl -s -H \"Authorization: Bearer faketoken\" http://localhost:5000/api/professors/1/courses)",
+      "Bash(/c/Users/lenovo/smu-flask/venv/Scripts/pip show:*)",
+      "Bash(/c/Users/lenovo/smu-flask/venv/Scripts/pip install:*)",
+      "Bash(venv/Scripts/python -c ':*)"
+    ]
+  }
+}

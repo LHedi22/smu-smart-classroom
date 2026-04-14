@@ -49,32 +49,30 @@ export function AuthProvider({ children }) {
         try {
           const adminSnap = await getWithTimeout(`/admins/${firebaseUser.uid}`);
           if (adminSnap.exists()) {
-            console.log('✅ Admin detected:', firebaseUser.uid);
             setUser(firebaseUser);
             setIsAdmin(true);
             setProfile(null);
             return;
           }
         } catch (err) {
-          console.log('⚠️ Admin check failed (expected if not admin):', err.message);
+          // Expected when user is not an admin — permission denied is a normal response
+          console.debug('[Auth] Admin check:', err.message);
         }
 
         // Check if professor
         try {
           const profSnap = await getWithTimeout(`/professors/${firebaseUser.uid}`);
           if (profSnap.exists()) {
-            console.log('✅ Professor detected:', firebaseUser.uid);
             setUser(firebaseUser);
             setProfile(profSnap.val());
             setIsAdmin(false);
             return;
           }
         } catch (err) {
-          console.error('❌ Professor check failed:', err.message);
+          console.error('[Auth] Professor check failed:', err.message);
         }
 
         // Authenticated but not registered
-        console.warn('⚠️ User authenticated but not registered as admin or professor:', firebaseUser.uid);
         await signOut(auth);
       } finally {
         hasResolvedInitialAuth.current = true;

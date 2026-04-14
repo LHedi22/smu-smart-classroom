@@ -1,9 +1,9 @@
 export default function EmptyState({ icon, title, description }) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 text-center gap-3">
-      {icon && <div className="text-slate-600 text-4xl">{icon}</div>}
-      <p className="text-slate-300 font-medium">{title}</p>
-      {description && <p className="text-slate-500 text-sm max-w-xs">{description}</p>}
-    </div>
+    <section className="card flex flex-col items-center justify-center gap-3 py-10 text-center">
+      {icon && <div className="text-4xl text-[color:var(--fg-muted)]">{icon}</div>}
+      <p className="text-base font-semibold text-[color:var(--fg-default)]">{title}</p>
+      {description && <p className="max-w-xs text-sm text-[color:var(--fg-muted)]">{description}</p>}
+    </section>
   )
 }

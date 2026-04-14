@@ -15,17 +15,20 @@ export default function TopBar() {
   const displayName = professor?.name ?? professor?.displayName ?? professor?.email?.split('@')[0] ?? 'Professor'
 
   return (
-    <header className="h-14 flex-shrink-0 bg-surface border-b border-surface-border flex items-center justify-between px-4 lg:px-6">
-      <span className="font-mono text-sm text-slate-400">{time}</span>
+    <header
+      className="sticky top-0 z-[120] flex h-16 shrink-0 items-center justify-between border-b border-[color:var(--border-muted)] bg-[color:var(--bg-surface-raised)] px-4 md:px-6"
+      style={{ boxShadow: 'var(--shadow-sticky)' }}
+    >
+      <span className="text-sm text-[color:var(--fg-muted)]">{time}</span>
       <div className="flex items-center gap-3">
-        <button className="relative p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-surface-raised transition-colors">
-          <Bell size={18} />
+        <button className="btn-ghost relative flex h-11 w-11 items-center justify-center p-0" aria-label="Notifications">
+          <Bell size={18} strokeWidth={2} />
         </button>
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-brand/20 flex items-center justify-center text-brand text-sm font-medium">
+          <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[color:var(--accent-brand)]/15 text-sm font-semibold text-[color:var(--accent-brand)]">
             {displayName[0]?.toUpperCase()}
           </div>
-          <span className="hidden md:block text-sm text-slate-300">{displayName}</span>
+          <span className="hidden text-sm text-[color:var(--fg-default)] md:block">{displayName}</span>
         </div>
       </div>
     </header>

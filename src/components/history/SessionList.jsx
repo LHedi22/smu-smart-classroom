@@ -15,11 +15,11 @@ export default function SessionList({ sessions }) {
         <button
           key={s.id}
           onClick={() => navigate(`/history/${s.id}`)}
-          className="card flex items-center gap-4 text-left hover:border-surface-border/80 transition-colors w-full"
+          className="card flex w-full items-center gap-4 rounded-[14px] text-left transition-transform duration-150 hover:-translate-y-0.5"
         >
           <div className="flex-1 min-w-0">
-            <p className="text-slate-200 font-medium">{s.courseName ?? s.courseId}</p>
-            <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
+            <p className="font-semibold text-[color:var(--fg-default)]">{s.courseName ?? s.courseId}</p>
+            <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-[color:var(--fg-muted)]">
               <span className="flex items-center gap-1"><MapPin size={11} />{s.roomId}</span>
               <span>{s.date} · {s.startTime}–{s.endTime}</span>
               <span className="flex items-center gap-1">
@@ -28,7 +28,7 @@ export default function SessionList({ sessions }) {
               </span>
             </div>
           </div>
-          <ChevronRight size={16} className="text-slate-600 flex-shrink-0" />
+          <ChevronRight size={16} className="flex-shrink-0 text-[color:var(--fg-muted)]" />
         </button>
       ))}
     </div>
