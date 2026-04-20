@@ -10,7 +10,8 @@ const MOCK_COURSES = {
   B204: { courseId: 'ISS196',  courseName: 'Freshman Project',             startTime: '2026-04-02T14:00:00', status: 'upcoming' },
 }
 
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
+const USE_MOCK    = import.meta.env.VITE_USE_MOCK    === 'true'
+const ALWAYS_LIVE = import.meta.env.VITE_ALWAYS_LIVE === 'true'
 
 export function useSession(roomId) {
   const { profile, user } = useAuth()
@@ -65,5 +66,25 @@ export function useSession(roomId) {
       )
     )
 
-  return { session: sessionBelongsToProfessor ? data : null, loading, error }
+  if (sessionBelongsToProfessor) return { session: data, loading, error }
+
+  if (ALWAYS_LIVE && !loading && hasRoomAccess(profile, roomId)) {
+    return {
+      session: {
+        sessionId:    `${roomId}-DEMO-${user?.uid ?? 'demo'}`,
+        courseId:     profile?.department ?? roomId,
+        courseName:   'Live Classroom Session',
+        professorUid: user?.uid ?? '',
+        roomId,
+        startTime:    new Date().toISOString(),
+        endTime:      null,
+        type:         'Lecture',
+        status:       'live',
+      },
+      loading: false,
+      error:   null,
+    }
+  }
+
+  return { session: null, loading, error }
 }

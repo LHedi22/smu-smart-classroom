@@ -33,7 +33,8 @@ function buildMockAttendance({ count, prefix, presentCount, startHour }) {
   }
 }
 
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
+const USE_MOCK    = import.meta.env.VITE_USE_MOCK    === 'true'
+const ALWAYS_LIVE = import.meta.env.VITE_ALWAYS_LIVE === 'true'
 
 export function useAttendance(roomId, sessionId) {
   const { profile, user } = useAuth()
@@ -75,8 +76,10 @@ export function useAttendance(roomId, sessionId) {
     )
   }
 
-  const mockData = USE_MOCK ? buildMockAttendance(MOCK_ATTENDANCE_CONFIG[roomId] ?? MOCK_ATTENDANCE_CONFIG.B204) : null
-  const source = USE_MOCK ? mockData : data
+  const mockData = (USE_MOCK || (ALWAYS_LIVE && !loading && !data))
+    ? buildMockAttendance(MOCK_ATTENDANCE_CONFIG[roomId] ?? MOCK_ATTENDANCE_CONFIG.B204)
+    : null
+  const source = USE_MOCK ? mockData : (ALWAYS_LIVE && !data ? mockData : data)
   const students = source?.students
     ? Object.entries(source.students).map(([id, v]) => ({ id, ...v }))
     : []

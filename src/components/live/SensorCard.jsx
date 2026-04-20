@@ -14,10 +14,10 @@ export default function SensorCard({ sensorKey, value }) {
     <div className={`card border ${colors.border} flex flex-col gap-3`}>
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs text-slate-500 uppercase tracking-wider">{def.label}</p>
-          <p className="text-2xl font-bold text-slate-100 mt-0.5 font-mono">
+          <p className="text-xs text-gray-400 uppercase tracking-wider font-medium">{def.label}</p>
+          <p className="text-2xl font-bold text-gray-800 mt-0.5 font-mono">
             {value != null ? value : '—'}
-            <span className="text-sm font-normal text-slate-500 ml-1">{def.unit}</span>
+            <span className="text-sm font-normal text-gray-400 ml-1">{def.unit}</span>
           </p>
         </div>
         <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${colors.bg} ${colors.text}`}>

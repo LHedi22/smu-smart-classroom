@@ -50,8 +50,9 @@
       }
     },
     "sessions": {
+      ".indexOn": ["professorId", "professorUid"],
       "$sessionId": {
-        ".read": "root.child('professors').child(auth.uid).child('assignedRooms').child(data.child('roomId').val()).exists() || root.child('admins').child(auth.uid).exists() === true",
+        ".read": "auth != null",
         ".write": "root.child('admins').child(auth.uid).exists() === true",
         ".validate": "newData.hasChildren(['id', 'courseId', 'roomId', 'date', 'startTime', 'professorId'])"
       }

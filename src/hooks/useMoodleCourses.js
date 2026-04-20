@@ -45,6 +45,7 @@ export function useMoodleCourses() {
   const { profile: professor, user } = useAuth()
   const [courses, setCourses]           = useState([])
   const [allSessions, setAllSessions]   = useState([])
+  const [totalEnrolled, setTotalEnrolled] = useState(0)
   const [loading, setLoading]           = useState(true)
   const [error, setError]               = useState(null)
   const [roomSessions, setRoomSessions] = useState({})  // roomId → activeSession | null
@@ -82,6 +83,7 @@ export function useMoodleCourses() {
           .sort((a, b) => a.startTime.localeCompare(b.startTime))
 
         setCourses(todaySlots)
+        setTotalEnrolled(data.reduce((sum, c) => sum + (c.enrolled ?? 0), 0))
 
         // Full semester sessions (S26) for history / upcoming consumers
         if (professor?.moodleUserId) {
@@ -125,7 +127,8 @@ export function useMoodleCourses() {
     return () => unsubs.forEach(u => u())
   }, [professor?.assignedRooms, professor?.moodleUserId, user?.uid])
 
-  if (USE_MOCK) return { courses: MOCK_COURSES, allSessions: [], loading: false, error: null }
+  const mockTotalEnrolled = MOCK_COURSES.reduce((s, c) => s + (c.enrolled ?? 0), 0)
+  if (USE_MOCK) return { courses: MOCK_COURSES, allSessions: [], totalEnrolled: mockTotalEnrolled, loading: false, error: null }
 
   // ── Merge schedule slots with owned live sessions from Firebase ─
   // If a room has an owned active session but no matching schedule slot for today,
@@ -165,5 +168,5 @@ export function useMoodleCourses() {
 
   const enriched = merged.sort((a, b) => a.startTime.localeCompare(b.startTime))
 
-  return { courses: enriched, allSessions, loading, error }
+  return { courses: enriched, allSessions, totalEnrolled, loading, error }
 }

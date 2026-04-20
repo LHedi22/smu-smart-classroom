@@ -22,7 +22,7 @@ export const SENSORS = [
 ]
 
 export const STATUS_COLORS = {
-  good:     { text: 'text-emerald-400', bg: 'bg-emerald-400/10', bar: 'bg-emerald-400', border: 'border-emerald-500' },
-  warn:     { text: 'text-amber-400',   bg: 'bg-amber-400/10',   bar: 'bg-amber-400',   border: 'border-amber-500'   },
-  critical: { text: 'text-red-400',     bg: 'bg-red-400/10',     bar: 'bg-red-400',     border: 'border-red-500'     },
+  good:     { text: 'text-green-700',  bg: 'bg-green-50',  bar: 'bg-[#86C057]', border: 'border-green-200' },
+  warn:     { text: 'text-amber-700',  bg: 'bg-amber-50',  bar: 'bg-[#FFB700]', border: 'border-amber-200' },
+  critical: { text: 'text-red-600',    bg: 'bg-red-50',    bar: 'bg-[#EC0044]', border: 'border-red-200'   },
 }

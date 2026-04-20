@@ -22,7 +22,7 @@ export default function History() {
 
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
-      <h1 className="text-xl font-semibold text-slate-100">Session History</h1>
+      <h1 className="text-xl font-semibold text-gray-800">Session History</h1>
       <AttendanceTrend sessions={sessions} />
       <HistoryFilters filter={filter} setFilter={setFilter} />
       <SessionList sessions={filtered} />

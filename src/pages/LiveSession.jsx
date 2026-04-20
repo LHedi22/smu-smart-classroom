@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom'
+import { Radio } from 'lucide-react'
 import SessionHeader      from '../components/live/SessionHeader'
 import EnvironmentPanel   from '../components/live/EnvironmentPanel'
 import AttendancePanel    from '../components/live/AttendancePanel'
@@ -18,6 +19,14 @@ export default function LiveSession() {
   const { devices, loading: dLoading, toggleDevice } = useDevices(roomId)
   const { enrolled, students, updateStudent } = useAttendance(roomId, session?.sessionId)
   const { alerts }                          = useAlerts(roomId)
+
+  if (!session) return (
+    <div className="max-w-2xl mx-auto flex flex-col items-center justify-center gap-3 py-24 text-center">
+      <Radio size={32} className="text-gray-300" />
+      <p className="text-gray-600 font-medium">No active session in room {roomId}</p>
+      <p className="text-sm text-gray-400">Start a session to see live attendance and sensor data.</p>
+    </div>
+  )
 
   return (
     <div className="flex flex-col gap-0">

@@ -5,9 +5,9 @@ export default function AttendanceTable({ students, onUpdate }) {
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="border-b border-surface-border">
+          <tr className="border-b border-surface-border bg-surface-raised">
             {['ID', 'Name', 'Status', 'Entry', 'Override', 'Note'].map(h => (
-              <th key={h} className="py-2 px-3 text-xs text-slate-500 font-medium uppercase tracking-wider">
+              <th key={h} className="py-2 px-3 text-xs text-gray-400 font-semibold uppercase tracking-wider">
                 {h}
               </th>
             ))}

@@ -29,7 +29,6 @@ export default function FinishLogin() {
         localStorage.removeItem('emailForSignIn')
         const user = result.user
 
-        // Check admin (may be permission-denied for non-admins — that's expected)
         try {
           const adminSnap = await get(ref(db, `admins/${user.uid}`))
           if (adminSnap.exists()) {
@@ -38,7 +37,6 @@ export default function FinishLogin() {
           }
         } catch { /* not an admin */ }
 
-        // Check existing professor
         try {
           const profSnap = await get(ref(db, `professors/${user.uid}`))
           if (profSnap.exists()) {
@@ -47,7 +45,6 @@ export default function FinishLogin() {
           }
         } catch { /* not yet a professor */ }
 
-        // Check pending registration
         setMessage('Setting up your account…')
         const emailKey = email.replace(/\./g, '_').replace(/@/g, '_at_')
         const pendingSnap = await get(ref(db, `pendingProfessors/${emailKey}`))
@@ -56,7 +53,7 @@ export default function FinishLogin() {
           await set(ref(db, `professors/${user.uid}`), {
             ...pendingSnap.val(),
             email:        user.email,
-            moodleUserId: null,
+            moodleUserId: pendingSnap.val().moodleUserId ?? null,
             createdAt:    new Date().toISOString(),
             settings: {
               thresholds: {
@@ -89,7 +86,7 @@ export default function FinishLogin() {
     <div className="min-h-screen bg-surface-deep flex items-center justify-center">
       <div className="text-center">
         <div className="animate-spin w-8 h-8 border-2 border-brand border-t-transparent rounded-full mx-auto mb-4" />
-        <p className="text-slate-400 text-sm">{message}</p>
+        <p className="text-gray-400 text-sm">{message}</p>
       </div>
     </div>
   )

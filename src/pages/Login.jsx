@@ -72,7 +72,7 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="yourname@smu.tn"
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-surface-border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50"
             />
           </div>
 
@@ -86,7 +86,7 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-surface-border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50"
             />
           </div>
 
@@ -99,7 +99,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition disabled:opacity-50"
+            className="w-full bg-brand hover:bg-brand-dark text-white font-medium py-2 rounded-lg transition disabled:opacity-50"
           >
             {loading ? "Signing in…" : "Sign In"}
           </button>

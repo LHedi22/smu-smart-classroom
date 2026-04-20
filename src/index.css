@@ -1,13 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand:          #00c49a;
-  --color-brand-dark:     #009e7a;
-  --color-brand-light:    #33d4b0;
-  --color-surface:        #0b1428;
-  --color-surface-deep:   #05091a;
-  --color-surface-raised: #111e35;
-  --color-surface-border: #1e3050;
+  /* Brand — SMU Blue as primary */
+  --color-brand:          #0075C9;
+  --color-brand-dark:     #005fa3;
+  --color-brand-light:    #3394d4;
+
+  /* Palette accents */
+  --color-teal:           #00AFAA;
+  --color-teal-dark:      #007EA4;
+  --color-green:          #86C057;
+  --color-purple:         #572F87;
+  --color-red:            #EC0044;
+  --color-pink:           #FB7598;
+  --color-amber:          #FFB700;
+
+  /* Light mode surfaces */
+  --color-surface:        #ffffff;
+  --color-surface-deep:   #f4f6fb;
+  --color-surface-raised: #eef1f7;
+  --color-surface-border: #dde3ed;
 
   --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
@@ -19,7 +31,7 @@
   }
 
   body {
-    @apply bg-surface-deep text-slate-200 antialiased;
+    @apply bg-surface-deep text-gray-800 antialiased;
     font-family: var(--font-sans);
     margin: 0;
   }
@@ -27,12 +39,12 @@
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { @apply bg-surface-deep; }
   ::-webkit-scrollbar-thumb { @apply bg-surface-border rounded-full; }
-  ::-webkit-scrollbar-thumb:hover { @apply bg-slate-500; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-gray-300; }
 }
 
 @layer components {
   .card {
-    @apply bg-surface rounded-xl border border-surface-border p-4;
+    @apply bg-surface rounded-xl border border-surface-border p-4 shadow-sm;
   }
 
   .btn-primary {
@@ -44,9 +56,9 @@
   }
 
   .btn-ghost {
-    @apply text-slate-400 px-3 py-2 rounded-lg transition-colors duration-150;
+    @apply text-gray-500 px-3 py-2 rounded-lg transition-colors duration-150;
   }
   .btn-ghost:hover {
-    @apply text-slate-200 bg-surface-raised;
+    @apply text-gray-700 bg-surface-raised;
   }
 }

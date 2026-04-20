@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(venv/Scripts/python app.py)",
+      "Bash(venv/Scripts/python -c ' *)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\lenovo\\smu-flask"
+    ]
+  }
+}

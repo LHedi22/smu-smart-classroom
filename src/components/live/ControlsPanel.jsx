@@ -11,7 +11,7 @@ const RELAYS = [
 export default function ControlsPanel({ devices, loading, toggleDevice }) {
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Controls</h2>
+      <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Controls</h2>
       <div className="card divide-y divide-surface-border">
         {loading ? (
           <LoadingSpinner />

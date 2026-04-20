@@ -1,10 +1,10 @@
 const variants = {
-  good:     'bg-emerald-400/10 text-emerald-400 border border-emerald-500/30',
-  warn:     'bg-amber-400/10  text-amber-400  border border-amber-500/30',
-  critical: 'bg-red-400/10    text-red-400    border border-red-500/30',
-  live:     'bg-brand/10      text-brand      border border-brand/30',
-  info:     'bg-blue-400/10   text-blue-400   border border-blue-500/30',
-  default:  'bg-slate-700/50  text-slate-300  border border-slate-600/30',
+  good:     'bg-green-50    text-green-700  border border-green-200',
+  warn:     'bg-amber-50    text-amber-700  border border-amber-200',
+  critical: 'bg-red-50      text-red-600    border border-red-200',
+  live:     'bg-brand/10    text-brand      border border-brand/30',
+  info:     'bg-sky-50      text-sky-700    border border-sky-200',
+  default:  'bg-gray-100    text-gray-600   border border-gray-200',
 }
 
 export default function Badge({ variant = 'default', children, className = '' }) {

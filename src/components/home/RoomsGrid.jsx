@@ -4,6 +4,8 @@ import { useNavigate }         from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { db }                  from '../../firebase'
 
+const ALWAYS_LIVE = import.meta.env.VITE_ALWAYS_LIVE === 'true'
+
 export default function RoomsGrid() {
   const { profile: professor, user } = useAuth()
   const [roomStatuses, setRoomStatuses] = useState({})
@@ -40,27 +42,27 @@ export default function RoomsGrid() {
 
   return (
     <div className="card flex flex-col gap-3">
-      <p className="text-sm font-medium text-slate-400">My Rooms</p>
+      <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider">My Rooms</p>
       <div className="grid grid-cols-2 gap-3">
         {rooms.map(roomId => {
-          const isLive = roomStatuses[roomId] != null
+          const isLive = ALWAYS_LIVE || roomStatuses[roomId] != null
           return (
             <button
               key={roomId}
               onClick={() => navigate(`/session/${roomId}`)}
               className={`rounded-xl p-4 text-left transition border
                 ${isLive
-                  ? 'border-red-500/30 bg-red-500/5 hover:bg-red-500/10'
-                  : 'border-slate-700/50 bg-slate-800/50 hover:bg-slate-700/50'
+                  ? 'border-brand/30 bg-brand/5 hover:bg-brand/10'
+                  : 'border-surface-border bg-surface-raised hover:bg-surface-border'
                 }`}
             >
-              <p className="font-bold text-slate-100 text-lg">{roomId}</p>
+              <p className="font-bold text-gray-800 text-lg">{roomId}</p>
               <p className={`text-xs mt-1 flex items-center gap-1.5
-                ${isLive ? 'text-red-400' : 'text-slate-500'}`}
+                ${isLive ? 'text-brand' : 'text-gray-400'}`}
               >
                 {isLive
-                  ? <><span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse inline-block" /> Session active</>
-                  : <><span className="w-1.5 h-1.5 bg-slate-600 rounded-full inline-block" /> Available</>
+                  ? <><span className="w-1.5 h-1.5 bg-brand rounded-full animate-pulse inline-block" /> Session active</>
+                  : <><span className="w-1.5 h-1.5 bg-gray-300 rounded-full inline-block" /> Available</>
                 }
               </p>
             </button>

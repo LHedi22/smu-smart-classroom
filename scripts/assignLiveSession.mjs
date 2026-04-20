@@ -36,8 +36,11 @@ Options:
   --room <roomId>             Optional. If omitted, inferred from course/schedule/prof rooms.
   --start <now|ISO|HH:mm>     Optional. Default: now
   --type <Lecture|Tutorial>   Optional. Default: Lecture
+  --students <count>          Optional. Seed N fake students into attendance (default: 0).
+  --present <count>           Optional. How many of the N students are present (default: 80% of N).
   --force                     Overwrite existing room activeSession
   --dry-run                   Print changes without writing
+  --list                      List all professors in Firebase and exit
   --help                      Show this help
 `);
 }
@@ -48,6 +51,8 @@ function parseArgs(argv) {
     const arg = argv[i];
     if (arg === "--force") out.force = true;
     else if (arg === "--dry-run") out.dryRun = true;
+    else if (arg === "--list") out.list = true;
+    else if (arg === "--list-courses") out["list-courses"] = true;
     else if (arg === "--help" || arg === "-h") out.help = true;
     else if (arg.startsWith("--")) {
       const key = arg.slice(2);
@@ -198,25 +203,95 @@ function inferRoom(course, professor, explicitRoom) {
   throw new Error("Could not infer room. Provide --room explicitly.");
 }
 
+const ALL_NAMES = [
+  "Ahmed Ben Salah","Sarra Trabelsi","Mohamed Amine Jlassi","Rim Chaabane","Yassine Boughanmi",
+  "Amira Sassi","Karim Mansour","Leila Hamdi","Oussama Feriani","Nadia Khalfallah",
+  "Bilel Cherif","Hajer Arfaoui","Rami Ghodbane","Ines Zribi","Ayoub Haddad",
+  "Fatma Jouini","Khalil Dridi","Mariem Boukari","Seifeddine Mrabet","Cyrine Elleuch",
+  "Tarek Benzarti","Salma Bahri","Mehdi Karray","Asma Chihi","Nizar Achouri",
+  "Dorra Hamrouni","Wassim Selmi","Hana Tlili","Fares Mathlouthi","Yosra Agrebi",
+  "Amine Belhaj","Malek Triki",
+];
+
+function buildAttendance(courseId, count, presentCount, startHhmm) {
+  const prefix = courseId.replace(/[^A-Z0-9]/gi, "").slice(0, 6).toUpperCase();
+  const [sh] = startHhmm.split(":");
+  const students = {};
+  for (let i = 0; i < count; i++) {
+    const id = `${prefix}${String(i + 1).padStart(3, "0")}`;
+    const present = i < presentCount;
+    students[id] = {
+      name: ALL_NAMES[i] ?? `Student ${i + 1}`,
+      entryTime: present ? `${sh}:${String(Math.floor(i / 5)).padStart(2, "0")}` : null,
+      exitTime: null,
+      present,
+      manualOverride: false,
+      overrideNote: "",
+      cameraConfidence: present ? parseFloat((0.85 + Math.random() * 0.14).toFixed(2)) : 0,
+    };
+  }
+  return { enrolled: count, students };
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) {
     usage();
     process.exit(0);
   }
+
+  const profSnap = await db.ref("/professors").get();
+  const professors = [];
+  profSnap.forEach((child) => professors.push({ uid: child.key, ...child.val() }));
+
+  if (args.list) {
+    if (!professors.length) {
+      console.log("No professors found in Firebase /professors — run createProfessors.mjs first.");
+    } else {
+      console.log(`Found ${professors.length} professor(s):\n`);
+      for (const p of professors) {
+        console.log(`  uid: ${p.uid}`);
+        console.log(`  name: ${p.name}  |  email: ${p.email}  |  moodleUserId: ${p.moodleUserId}`);
+        console.log(`  rooms: ${Object.keys(p.assignedRooms || {}).join(", ") || "(none)"}\n`);
+      }
+    }
+    process.exit(0);
+  }
+
+  if (args["list-courses"]) {
+    const courseSnap2 = await db.ref("/courses").get();
+    const coursesMap2 = courseSnap2.exists() ? courseSnap2.val() : {};
+    const allCourses2 = Object.entries(coursesMap2).map(([key, val]) => ({ key, ...val }));
+
+    const target = args.professor ? (() => { try { return resolveProfessor(professors, args.professor) } catch { return null } })() : null;
+    const relevant = target
+      ? allCourses2.filter(c => courseOwnedByProfessor(c, target))
+      : allCourses2;
+
+    if (!relevant.length) {
+      console.log(target
+        ? `No courses owned by ${target.name} (uid: ${target.uid}, moodleUserId: ${target.moodleUserId}).`
+        : "No courses found in Firebase /courses.");
+    } else {
+      console.log(`${relevant.length} course(s)${target ? ` owned by ${target.name}` : ""}:\n`);
+      for (const c of relevant) {
+        const code = c.code || c.courseId || c.key;
+        const name = c.name || c.fullname || "(no name)";
+        const room = c.room || "(no room)";
+        console.log(`  key: ${c.key}  |  code: ${code}  |  name: ${name}  |  room: ${room}`);
+        console.log(`  professorId: ${c.professorId ?? "(none)"}  |  professorUid: ${c.professorUid ?? "(none)"}\n`);
+      }
+    }
+    process.exit(0);
+  }
+
   if (!args.professor) {
     usage();
     throw new Error("Missing required argument --professor");
   }
 
   const startAt = parseStart(args.start);
-  const [profSnap, courseSnap] = await Promise.all([
-    db.ref("/professors").get(),
-    db.ref("/courses").get(),
-  ]);
-
-  const professors = [];
-  profSnap.forEach((child) => professors.push({ uid: child.key, ...child.val() }));
+  const courseSnap = await db.ref("/courses").get();
   const coursesMap = courseSnap.exists() ? courseSnap.val() : {};
 
   const professor = resolveProfessor(professors, args.professor);
@@ -271,10 +346,24 @@ async function main() {
     moodleSynced: false,
   };
 
+  const studentCount = Math.max(0, parseInt(args.students ?? "0", 10) || 0);
+  const presentCount = args.present != null
+    ? Math.min(parseInt(args.present, 10) || 0, studentCount)
+    : Math.round(studentCount * 0.8);
+
+  const attendanceData = studentCount > 0
+    ? buildAttendance(courseId, studentCount, presentCount, hhmm)
+    : { enrolled: 0, students: {} };
+
+  const attendanceRate = studentCount > 0
+    ? parseFloat(((presentCount / studentCount) * 100).toFixed(1))
+    : null;
+
   const updates = {
     [`/classrooms/${roomId}/activeSession`]: activeSession,
-    [`/classrooms/${roomId}/attendance/${sessionId}`]: { enrolled: 0, students: {} },
-    [`/sessions/${sessionId}`]: sessionRecord,
+    [`/classrooms/${roomId}/attendance/${sessionId}`]: attendanceData,
+    [`/sessions/${sessionId}`]: { ...sessionRecord, attendanceRate },
+    [`/professors/${professor.uid}/assignedRooms/${roomId}`]: true,
   };
 
   if (args.dryRun) {
@@ -291,6 +380,9 @@ async function main() {
   console.log(`Room: ${roomId}`);
   console.log(`Session ID: ${sessionId}`);
   console.log(`Start: ${activeSession.startTime}`);
+  if (studentCount > 0) {
+    console.log(`Students: ${studentCount} enrolled, ${presentCount} present (${attendanceRate}%)`);
+  }
 }
 
 main().catch((err) => {

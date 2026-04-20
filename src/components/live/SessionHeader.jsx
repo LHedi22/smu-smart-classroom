@@ -21,18 +21,18 @@ export default function SessionHeader({ session, roomId }) {
       <div>
         <div className="flex items-center gap-2 mb-1">
           <Radio size={14} className="text-brand animate-pulse" />
-          <span className="text-xs font-medium text-brand uppercase tracking-wide">Live Session</span>
+          <span className="text-xs font-semibold text-brand uppercase tracking-wide">Live Session</span>
         </div>
-        <h1 className="text-xl font-semibold text-slate-100">{session?.courseName ?? '—'}</h1>
-        <div className="flex items-center gap-3 mt-1 text-sm text-slate-500">
+        <h1 className="text-xl font-semibold text-gray-800">{session?.courseName ?? '—'}</h1>
+        <div className="flex items-center gap-3 mt-1 text-sm text-gray-400">
           <span className="flex items-center gap-1"><MapPin size={13} />{roomId}</span>
           <span className="font-mono">{formatDuration(elapsed)}</span>
         </div>
       </div>
       <button
         onClick={() => navigate(`/session/${roomId}/review`)}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/10 text-red-400
-                   border border-red-500/30 hover:bg-red-500/20 transition-colors text-sm font-medium flex-shrink-0"
+        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-50 text-red-600
+                   border border-red-200 hover:bg-red-100 transition-colors text-sm font-medium flex-shrink-0"
       >
         <StopCircle size={15} />
         End Session

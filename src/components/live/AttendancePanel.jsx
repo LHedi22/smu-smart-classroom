@@ -8,13 +8,13 @@ export default function AttendancePanel({ enrolled, students, updateStudent, ses
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Attendance</h2>
+      <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Attendance</h2>
 
       {sessionStatus !== 'live' ? (
         <div className="card flex flex-col items-center justify-center gap-3 py-10 text-center">
-          <Clock size={32} className="text-slate-600" />
-          <p className="text-slate-400 font-medium">Class hasn't started yet</p>
-          <p className="text-xs text-slate-600">{enrolled} students enrolled — attendance will appear once the session goes live.</p>
+          <Clock size={32} className="text-gray-300" />
+          <p className="text-gray-600 font-medium">Class hasn't started yet</p>
+          <p className="text-xs text-gray-400">{enrolled} students enrolled — attendance will appear once the session goes live.</p>
         </div>
       ) : (
         <>
@@ -23,13 +23,13 @@ export default function AttendancePanel({ enrolled, students, updateStudent, ses
             <div className="relative flex-shrink-0">
               <RingChart value={present} total={enrolled} size={100} strokeWidth={9} />
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-xl font-bold text-slate-100">{pct}%</span>
+                <span className="text-xl font-bold text-gray-800">{pct}%</span>
               </div>
             </div>
             <div className="flex flex-col gap-1.5">
-              <Stat label="Present"  value={present}            color="text-emerald-400" />
-              <Stat label="Absent"   value={enrolled - present} color="text-red-400" />
-              <Stat label="Enrolled" value={enrolled}           color="text-slate-400" />
+              <Stat label="Present"  value={present}            color="text-green-600" />
+              <Stat label="Absent"   value={enrolled - present} color="text-red-500" />
+              <Stat label="Enrolled" value={enrolled}           color="text-gray-500" />
             </div>
           </div>
 
@@ -53,7 +53,7 @@ function Stat({ label, value, color }) {
   return (
     <div className="flex items-center gap-2">
       <span className={`text-lg font-bold ${color}`}>{value}</span>
-      <span className="text-xs text-slate-500">{label}</span>
+      <span className="text-xs text-gray-400">{label}</span>
     </div>
   )
 }

@@ -5,7 +5,7 @@ import { SENSORS } from '../../utils/sensorStatus'
 export default function EnvironmentPanel({ sensors, loading }) {
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Environment</h2>
+      <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Environment</h2>
       {loading ? (
         <LoadingSpinner />
       ) : (

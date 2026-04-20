@@ -16,16 +16,16 @@ export default function TopBar() {
 
   return (
     <header className="h-14 flex-shrink-0 bg-surface border-b border-surface-border flex items-center justify-between px-4 lg:px-6">
-      <span className="font-mono text-sm text-slate-400">{time}</span>
+      <span className="font-mono text-sm text-gray-400">{time}</span>
       <div className="flex items-center gap-3">
-        <button className="relative p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-surface-raised transition-colors">
+        <button className="relative p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-surface-raised transition-colors">
           <Bell size={18} />
         </button>
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-brand/20 flex items-center justify-center text-brand text-sm font-medium">
+          <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white text-sm font-semibold">
             {displayName[0]?.toUpperCase()}
           </div>
-          <span className="hidden md:block text-sm text-slate-300">{displayName}</span>
+          <span className="hidden md:block text-sm text-gray-700 font-medium">{displayName}</span>
         </div>
       </div>
     </header>

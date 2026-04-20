@@ -1,61 +1,113 @@
 1️⃣ FIREBASE PROFESSOR RECORDS
 ────────────────────────────────────────────────────────────
-Total professors in Firebase: 21
-✅ With moodleUserId: 21
+Total professors in Firebase: 20
+✅ With moodleUserId: 20
 ❌ Missing moodleUserId: 0
 
 Moodle ID → Firebase UID mapping:
-  ✅ 24 (Adel Kaabia) → pcNNioESJ3WYcVXEMoUUBWhyotY2
-  ✅ 13 (Ahmed Jallouli) → CxlxEW10RGOf5tEejDXikVQ051Y2
-  ✅ 29 (Amira Chebil) → X0o4mm0mjgWOOnv87BYUZeUgPBX2
-  ✅ 23 (Bilel Marzouk) → iLCGJuAAJeTdmHWd0kKaMUhPlrH3
-  ✅ 21 (Chokri Ben Amor) → DcbEcQBBW1fvYWOqnDJnLqdbXC82
-  ✅ 14 (Fatma Trabelsi) → ghwLF95XZnhiLq2gTMOf4qI751W2
-  ✅ 32 (Hatem Ferjani) → RCJINeIsjpXSzZi7N6YXmpHBgjv2
-  ✅ 15 (Hind Ferchichi) → su37gL71JgVbhaIzjybPwiB40Zq1
-  ✅ 26 (Ines Miled) → wRMPC9kcBfhjYFRlqhRFHkJBroK2
-  ✅ 22 (Karim Gharbi) → OktfnMBZINU9tStt5nhcfcAH5qZ2
-  ✅ 19 (Leila Bouzid) → XrefXlPzPBY0mWmAu3sP4w5QCV22
-  ✅ 16 (Mohamed Ben Salah) → 9Bl6jiWZtBZ48pbrdEtLgIbynDB3
-  ✅ 31 (Nabil Zouari) → TpfYKDd2ZESHtgUNNGAnHXJB3aW2
-  ✅ 17 (Rani Rekik) → h523mmeAhQWzb4AYYbixZH6woHv2
-  ✅ 20 (Rim Hammami) → rsuT4xyPk4NdpPGIwfQUBDzltl03
-  ✅ 28 (Sofiane Dridi) → U6woWZJzOxQhbnZe1sJe7pABgx02
-  ✅ 25 (Sonia Khelifi) → te2kLMKGV6Ne7Is2D22RhPtAwj62
-  ✅ 18 (Tarek Bouaziz) → Y55AMlV5uWOIQWVe0mXDpxWrzRh2
-  ✅ 30 (Wafa Jlassi) → rsIA3WGdfAXnOp4ttPEslWJnkz53
-  ✅ 27 (Youssef Mansouri) → Odysl2Wf9sdqWSaLTQPUgBnqXPF2
+  ✅ 24 (Adel Kaabia) → QKz8E9T3EvXXWEMsrqdpd438bbU2
+  ✅ 13 (Ahmed Jallouli) → 3OW9rC8wJaSKhmi6DT5CcWGOM6v2
+  ✅ 29 (Amira Chebil) → 1Xsr4YRAYSQkLV8x2OecqCfInbH2
+  ✅ 23 (Bilel Marzouk) → aJ25NZWRjNWMKRZlpGMc32w2mgY2
+  ✅ 21 (Chokri Ben Amor) → SDT2zlTuv2VmnovXYAEAATsBYWh1
+  ✅ 14 (Fatma Trabelsi) → ZO33uYL8nBSdFFEpuACdxQLlVOs2
+  ✅ 32 (Hatem Ferjani) → wervtGeJuHdmQ6PmVaKmXrtiPKl2
+  ✅ 15 (Hind Ferchichi) → AIGaFSE3eDfLNIi4RCn7Qh18wIo2
+  ✅ 26 (Ines Miled) → ANUyMm9aU5SjgC3HUbWBEleD31C3
+  ✅ 22 (Karim Gharbi) → oHkqgdDvHDYvuQI0JQJ9IzZ1O9C2
+  ✅ 19 (Leila Bouzid) → oJtq55b8U9T1PcbpBh6hvmT5FXf1
+  ✅ 16 (Mohamed Ben Salah) → KQyqnzkRVpdBY9gEPvDZVldAaVh2
+  ✅ 31 (Nabil Zouari) → If2GU1VOnMWGo8I19xF4I3GZfa22
+  ✅ 17 (Rani Rekik) → CpSkGhkKTVSCy5owVZ8tzPChrkc2
+  ✅ 20 (Rim Hammami) → 0yZ7JuC1NiaN5ANKZH4HgNyTkaM2
+  ✅ 28 (Sofiane Dridi) → 19A96QhJJhXQ7Lpx0AgnaMQ9ODR2
+  ✅ 25 (Sonia Khelifi) → WP93llIjHWMlE6Ucl2ajnwFzmvo2
+  ✅ 18 (Tarek Bouaziz) → 0VeXrmDbrnPw6zBR1uIc6U4p4vZ2
+  ✅ 30 (Wafa Jlassi) → MmIgN5EzBEVAzUwAZTy1qryRWTf2
+  ✅ 27 (Youssef Mansouri) → lxXMKHo62QgxN4lRQbz9ntj9Irm2
 
 
 2️⃣ COURSE ASSIGNMENTS
 ────────────────────────────────────────────────────────────
-Total courses: 15
-  - With professorUid: 15
-  - With professorId: 0
-  - With BOTH: 0
+Total courses: 52
+  - With professorUid: 52
+  - With professorId: 52
+  - With BOTH: 52
   - ❌ Unassigned: 0
 
 Courses assigned to each professor:
-  ❌ 24 (Adel Kaabia): NO COURSES ASSIGNED
-  ❌ 13 (Ahmed Jallouli): NO COURSES ASSIGNED
-  ❌ 29 (Amira Chebil): NO COURSES ASSIGNED
-  ❌ 23 (Bilel Marzouk): NO COURSES ASSIGNED
-  ❌ 21 (Chokri Ben Amor): NO COURSES ASSIGNED
-  ❌ 14 (Fatma Trabelsi): NO COURSES ASSIGNED
-  ❌ 32 (Hatem Ferjani): NO COURSES ASSIGNED
-  ❌ 15 (Hind Ferchichi): NO COURSES ASSIGNED
-  ❌ 26 (Ines Miled): NO COURSES ASSIGNED
-  ❌ 22 (Karim Gharbi): NO COURSES ASSIGNED
-  ❌ 19 (Leila Bouzid): NO COURSES ASSIGNED
-  ❌ 16 (Mohamed Ben Salah): NO COURSES ASSIGNED
-  ❌ 31 (Nabil Zouari): NO COURSES ASSIGNED
-  ❌ 17 (Rani Rekik): NO COURSES ASSIGNED
-  ❌ 20 (Rim Hammami): NO COURSES ASSIGNED
-  ❌ 28 (Sofiane Dridi): NO COURSES ASSIGNED
-  ❌ 25 (Sonia Khelifi): NO COURSES ASSIGNED
-  ❌ 18 (Tarek Bouaziz): NO COURSES ASSIGNED
-  ❌ 30 (Wafa Jlassi): NO COURSES ASSIGNED
-  ❌ 27 (Youssef Mansouri): NO COURSES ASSIGNED
+  ✅ 24 (Adel Kaabia): 1 courses
+     - ISS201 (ISS201): room=D105, professorUid=QKz8E9T3EvXXWEMsrqdpd438bbU2
+  ✅ 13 (Ahmed Jallouli): 2 courses
+     - CS201 (CS201): room=A101, professorUid=3OW9rC8wJaSKhmi6DT5CcWGOM6v2
+     - ISS196 (ISS196): room=B204, professorUid=3OW9rC8wJaSKhmi6DT5CcWGOM6v2
+  ✅ 29 (Amira Chebil): 3 courses
+     - ENG111 (ENG111): room=C310, professorUid=1Xsr4YRAYSQkLV8x2OecqCfInbH2
+     - ENG301 (ENG301): room=A101, professorUid=1Xsr4YRAYSQkLV8x2OecqCfInbH2
+     - LANG101 (LANG101): room=C310, professorUid=1Xsr4YRAYSQkLV8x2OecqCfInbH2
+  ✅ 23 (Bilel Marzouk): 2 courses
+     - CS103 (CS103): room=A101, professorUid=aJ25NZWRjNWMKRZlpGMc32w2mgY2
+     - CS203 (CS203): room=C310, professorUid=aJ25NZWRjNWMKRZlpGMc32w2mgY2
+  ✅ 21 (Chokri Ben Amor): 3 courses
+     - MATH243 (MATH243): room=D105, professorUid=SDT2zlTuv2VmnovXYAEAATsBYWh1
+     - MATH401 (MATH401): room=C310, professorUid=SDT2zlTuv2VmnovXYAEAATsBYWh1
+     - MATH402 (MATH402): room=B204, professorUid=SDT2zlTuv2VmnovXYAEAATsBYWh1
+  ✅ 14 (Fatma Trabelsi): 3 courses
+     - ISS101 (ISS101): room=B204, professorUid=ZO33uYL8nBSdFFEpuACdxQLlVOs2
+     - MATH201 (MATH201): room=C310, professorUid=ZO33uYL8nBSdFFEpuACdxQLlVOs2
+     - MATH301 (MATH301): room=D105, professorUid=ZO33uYL8nBSdFFEpuACdxQLlVOs2
+  ✅ 32 (Hatem Ferjani): 3 courses
+     - PHYS151 (PHYS151): room=C310, professorUid=wervtGeJuHdmQ6PmVaKmXrtiPKl2
+     - PHYS401 (PHYS401): room=B204, professorUid=wervtGeJuHdmQ6PmVaKmXrtiPKl2
+     - PHYS402 (PHYS402): room=D105, professorUid=wervtGeJuHdmQ6PmVaKmXrtiPKl2
+  ✅ 15 (Hind Ferchichi): 3 courses
+     - CS301 (CS301): room=B204, professorUid=AIGaFSE3eDfLNIi4RCn7Qh18wIo2
+     - CS302 (CS302): room=C310, professorUid=AIGaFSE3eDfLNIi4RCn7Qh18wIo2
+     - ISS26 (ISS26): room=B204, professorUid=AIGaFSE3eDfLNIi4RCn7Qh18wIo2
+  ✅ 26 (Ines Miled): 2 courses
+     - BIO101 (BIO101): room=A101, professorUid=ANUyMm9aU5SjgC3HUbWBEleD31C3
+     - BIO201 (BIO201): room=B204, professorUid=ANUyMm9aU5SjgC3HUbWBEleD31C3
+  ✅ 22 (Karim Gharbi): 3 courses
+     - ECE101 (ECE101): room=D105, professorUid=oHkqgdDvHDYvuQI0JQJ9IzZ1O9C2
+     - ECE143 (ECE143): room=D105, professorUid=oHkqgdDvHDYvuQI0JQJ9IzZ1O9C2
+     - ECE201 (ECE201): room=A101, professorUid=oHkqgdDvHDYvuQI0JQJ9IzZ1O9C2
+  ✅ 19 (Leila Bouzid): 3 courses
+     - MATH101 (MATH101): room=C310, professorUid=oJtq55b8U9T1PcbpBh6hvmT5FXf1
+     - MATH102 (MATH102): room=A101, professorUid=oJtq55b8U9T1PcbpBh6hvmT5FXf1
+     - MATH141 (MATH141): room=B204, professorUid=oJtq55b8U9T1PcbpBh6hvmT5FXf1
+  ✅ 16 (Mohamed Ben Salah): 3 courses
+     - CS101 (CS101): room=A101, professorUid=KQyqnzkRVpdBY9gEPvDZVldAaVh2
+     - ENG101 (ENG101): room=A101, professorUid=KQyqnzkRVpdBY9gEPvDZVldAaVh2
+     - ENG201 (ENG201): room=B204, professorUid=KQyqnzkRVpdBY9gEPvDZVldAaVh2
+  ✅ 31 (Nabil Zouari): 2 courses
+     - PHYS301 (PHYS301): room=C310, professorUid=If2GU1VOnMWGo8I19xF4I3GZfa22
+     - PHYS302 (PHYS302): room=A101, professorUid=If2GU1VOnMWGo8I19xF4I3GZfa22
+  ✅ 17 (Rani Rekik): 3 courses
+     - CS102 (CS102): room=A101, professorUid=CpSkGhkKTVSCy5owVZ8tzPChrkc2
+     - PHYS101 (PHYS101): room=D105, professorUid=CpSkGhkKTVSCy5owVZ8tzPChrkc2
+     - PHYS201 (PHYS201): room=A101, professorUid=CpSkGhkKTVSCy5owVZ8tzPChrkc2
+  ✅ 20 (Rim Hammami): 3 courses
+     - MATH142 (MATH142): room=A101, professorUid=0yZ7JuC1NiaN5ANKZH4HgNyTkaM2
+     - STAT101 (STAT101): room=A101, professorUid=0yZ7JuC1NiaN5ANKZH4HgNyTkaM2
+     - STAT201 (STAT201): room=D105, professorUid=0yZ7JuC1NiaN5ANKZH4HgNyTkaM2
+  ✅ 28 (Sofiane Dridi): 2 courses
+     - ECON301 (ECON301): room=B204, professorUid=19A96QhJJhXQ7Lpx0AgnaMQ9ODR2
+     - ECON302 (ECON302): room=D105, professorUid=19A96QhJJhXQ7Lpx0AgnaMQ9ODR2
+  ✅ 25 (Sonia Khelifi): 3 courses
+     - CHEM161 (CHEM161): room=C310, professorUid=WP93llIjHWMlE6Ucl2ajnwFzmvo2
+     - CHEM301 (CHEM301): room=C310, professorUid=WP93llIjHWMlE6Ucl2ajnwFzmvo2
+     - CHEM302 (CHEM302): room=D105, professorUid=WP93llIjHWMlE6Ucl2ajnwFzmvo2
+  ✅ 18 (Tarek Bouaziz): 2 courses
+     - CHEM101 (CHEM101): room=B204, professorUid=0VeXrmDbrnPw6zBR1uIc6U4p4vZ2
+     - CHEM201 (CHEM201): room=D105, professorUid=0VeXrmDbrnPw6zBR1uIc6U4p4vZ2
+  ✅ 30 (Wafa Jlassi): 3 courses
+     - ENG121 (ENG121): room=C310, professorUid=MmIgN5EzBEVAzUwAZTy1qryRWTf2
+     - LANG201 (LANG201): room=D105, professorUid=MmIgN5EzBEVAzUwAZTy1qryRWTf2
+     - LANG301 (LANG301): room=B204, professorUid=MmIgN5EzBEVAzUwAZTy1qryRWTf2
+  ✅ 27 (Youssef Mansouri): 3 courses
+     - ECO171 (ECO171): room=A101, professorUid=lxXMKHo62QgxN4lRQbz9ntj9Irm2
+     - ECON101 (ECON101): room=C310, professorUid=lxXMKHo62QgxN4lRQbz9ntj9Irm2
+     - ECON201 (ECON201): room=A101, professorUid=lxXMKHo62QgxN4lRQbz9ntj9Irm2
 
 
 3️⃣ FIREBASE UID VALIDATION
@@ -67,159 +119,166 @@ Validating professors' Firebase UIDs:
 
 4️⃣ SESSIONS IN FIREBASE
 ────────────────────────────────────────────────────────────
-Total sessions in Firebase: 810
+Total sessions in Firebase: 1972
 Sessions stored by professorId:
-  ❌ 24 (Adel Kaabia): NO SESSIONS
-  ❌ 13 (Ahmed Jallouli): NO SESSIONS
-  ❌ 29 (Amira Chebil): NO SESSIONS
-  ❌ 23 (Bilel Marzouk): NO SESSIONS
-  ❌ 21 (Chokri Ben Amor): NO SESSIONS
-  ❌ 14 (Fatma Trabelsi): NO SESSIONS
-  ❌ 32 (Hatem Ferjani): NO SESSIONS
-  ❌ 15 (Hind Ferchichi): NO SESSIONS
-  ❌ 26 (Ines Miled): NO SESSIONS
-  ❌ 22 (Karim Gharbi): NO SESSIONS
-  ❌ 19 (Leila Bouzid): NO SESSIONS
-  ❌ 16 (Mohamed Ben Salah): NO SESSIONS
-  ❌ 31 (Nabil Zouari): NO SESSIONS
-  ❌ 17 (Rani Rekik): NO SESSIONS
-  ❌ 20 (Rim Hammami): NO SESSIONS
-  ❌ 28 (Sofiane Dridi): NO SESSIONS
-  ❌ 25 (Sonia Khelifi): NO SESSIONS
-  ❌ 18 (Tarek Bouaziz): NO SESSIONS
-  ❌ 30 (Wafa Jlassi): NO SESSIONS
-  ❌ 27 (Youssef Mansouri): NO SESSIONS
+  ✅ 24 (Adel Kaabia): 58 sessions
+     Date range: 2025-09-16 to 2026-04-09
+  ✅ 13 (Ahmed Jallouli): 116 sessions
+     Date range: 2025-09-15 to 2026-04-09
+  ✅ 29 (Amira Chebil): 116 sessions
+     Date range: 2025-09-15 to 2026-04-10
+  ✅ 23 (Bilel Marzouk): 58 sessions
+     Date range: 2025-09-15 to 2026-04-10
+  ✅ 21 (Chokri Ben Amor): 116 sessions
+     Date range: 2025-09-15 to 2026-04-10
+  ✅ 14 (Fatma Trabelsi): 116 sessions
+     Date range: 2025-09-15 to 2026-04-09
+  ✅ 32 (Hatem Ferjani): 116 sessions
+     Date range: 2025-09-15 to 2026-04-10
+  ✅ 15 (Hind Ferchichi): 116 sessions
+     Date range: 2025-09-15 to 2026-04-10
+  ✅ 26 (Ines Miled): 58 sessions
+     Date range: 2025-09-16 to 2026-04-09
+  ✅ 22 (Karim Gharbi): 116 sessions
+     Date range: 2025-09-16 to 2026-04-09
+  ✅ 19 (Leila Bouzid): 116 sessions
+     Date range: 2025-09-15 to 2026-04-10
+  ✅ 16 (Mohamed Ben Salah): 116 sessions
+     Date range: 2025-09-15 to 2026-04-09
+  ✅ 31 (Nabil Zouari): 58 sessions
+     Date range: 2025-09-15 to 2026-04-09
+  ✅ 17 (Rani Rekik): 116 sessions
+     Date range: 2025-09-15 to 2026-04-09
+  ✅ 20 (Rim Hammami): 116 sessions
+     Date range: 2025-09-15 to 2026-04-10
+  ✅ 28 (Sofiane Dridi): 58 sessions
+     Date range: 2025-09-16 to 2026-04-09
+  ✅ 25 (Sonia Khelifi): 116 sessions
+     Date range: 2025-09-15 to 2026-04-08
+  ✅ 18 (Tarek Bouaziz): 58 sessions
+     Date range: 2025-09-15 to 2026-04-08
+  ✅ 30 (Wafa Jlassi): 116 sessions
+     Date range: 2025-09-16 to 2026-04-10
+  ✅ 27 (Youssef Mansouri): 116 sessions
+     Date range: 2025-09-15 to 2026-04-10
 
 
 5️⃣ ASSIGNED ROOMS
 ────────────────────────────────────────────────────────────
 Checking assignedRooms for each professor:
   Adel Kaabia:
-     Firebase UID: pcNNioESJ3WYcVXEMoUUBWhyotY2
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: QKz8E9T3EvXXWEMsrqdpd438bbU2
+     Assigned rooms: D105
   Ahmed Jallouli:
-     Firebase UID: CxlxEW10RGOf5tEejDXikVQ051Y2
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: 3OW9rC8wJaSKhmi6DT5CcWGOM6v2
+     Assigned rooms: A101, B204
   Amira Chebil:
-     Firebase UID: X0o4mm0mjgWOOnv87BYUZeUgPBX2
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: 1Xsr4YRAYSQkLV8x2OecqCfInbH2
+     Assigned rooms: C310
   Bilel Marzouk:
-     Firebase UID: iLCGJuAAJeTdmHWd0kKaMUhPlrH3
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: aJ25NZWRjNWMKRZlpGMc32w2mgY2
+     Assigned rooms: D105
   Chokri Ben Amor:
-     Firebase UID: DcbEcQBBW1fvYWOqnDJnLqdbXC82
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: SDT2zlTuv2VmnovXYAEAATsBYWh1
+     Assigned rooms: D105
   Fatma Trabelsi:
-     Firebase UID: ghwLF95XZnhiLq2gTMOf4qI751W2
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: ZO33uYL8nBSdFFEpuACdxQLlVOs2
+     Assigned rooms: A101, B204
   Hatem Ferjani:
-     Firebase UID: RCJINeIsjpXSzZi7N6YXmpHBgjv2
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: wervtGeJuHdmQ6PmVaKmXrtiPKl2
+     Assigned rooms: C310
   Hind Ferchichi:
-     Firebase UID: su37gL71JgVbhaIzjybPwiB40Zq1
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: AIGaFSE3eDfLNIi4RCn7Qh18wIo2
+     Assigned rooms: B204
   Ines Miled:
-     Firebase UID: wRMPC9kcBfhjYFRlqhRFHkJBroK2
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: ANUyMm9aU5SjgC3HUbWBEleD31C3
+     Assigned rooms: C310
   Karim Gharbi:
-     Firebase UID: OktfnMBZINU9tStt5nhcfcAH5qZ2
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: oHkqgdDvHDYvuQI0JQJ9IzZ1O9C2
+     Assigned rooms: D105
   Leila Bouzid:
-     Firebase UID: XrefXlPzPBY0mWmAu3sP4w5QCV22
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: oJtq55b8U9T1PcbpBh6hvmT5FXf1
+     Assigned rooms: B204
   Mohamed Ben Salah:
-     Firebase UID: 9Bl6jiWZtBZ48pbrdEtLgIbynDB3
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: KQyqnzkRVpdBY9gEPvDZVldAaVh2
+     Assigned rooms: A101
   Nabil Zouari:
-     Firebase UID: TpfYKDd2ZESHtgUNNGAnHXJB3aW2
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: If2GU1VOnMWGo8I19xF4I3GZfa22
+     Assigned rooms: C310
   Rani Rekik:
-     Firebase UID: h523mmeAhQWzb4AYYbixZH6woHv2
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: CpSkGhkKTVSCy5owVZ8tzPChrkc2
+     Assigned rooms: A101
   Rim Hammami:
-     Firebase UID: rsuT4xyPk4NdpPGIwfQUBDzltl03
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: 0yZ7JuC1NiaN5ANKZH4HgNyTkaM2
+     Assigned rooms: A101
   Sofiane Dridi:
-     Firebase UID: U6woWZJzOxQhbnZe1sJe7pABgx02
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: 19A96QhJJhXQ7Lpx0AgnaMQ9ODR2
+     Assigned rooms: A101
   Sonia Khelifi:
-     Firebase UID: te2kLMKGV6Ne7Is2D22RhPtAwj62
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: WP93llIjHWMlE6Ucl2ajnwFzmvo2
+     Assigned rooms: C310
   Tarek Bouaziz:
-     Firebase UID: Y55AMlV5uWOIQWVe0mXDpxWrzRh2
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: 0VeXrmDbrnPw6zBR1uIc6U4p4vZ2
+     Assigned rooms: A101
   Wafa Jlassi:
-     Firebase UID: rsIA3WGdfAXnOp4ttPEslWJnkz53
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: MmIgN5EzBEVAzUwAZTy1qryRWTf2
+     Assigned rooms: C310
   Youssef Mansouri:
-     Firebase UID: Odysl2Wf9sdqWSaLTQPUgBnqXPF2
-     Assigned rooms: NONE
-     ⚠️  No assigned rooms!
+     Firebase UID: lxXMKHo62QgxN4lRQbz9ntj9Irm2
+     Assigned rooms: A101
 
 
 6️⃣ DATA CONSISTENCY CHECK
 ────────────────────────────────────────────────────────────
 Comprehensive consistency check:
 
-⚠️  Adel Kaabia (Moodle ID: 24):
-   - No courses assigned
-⚠️  Ahmed Jallouli (Moodle ID: 13):
-   - No courses assigned
+✅ Adel Kaabia: All data consistent
+✅ Ahmed Jallouli: All data consistent
 ⚠️  Amira Chebil (Moodle ID: 29):
-   - No courses assigned
+   - Course ENG301 room not in assignedRooms
 ⚠️  Bilel Marzouk (Moodle ID: 23):
-   - No courses assigned
+   - Course CS103 room not in assignedRooms
+   - Course CS203 room not in assignedRooms
 ⚠️  Chokri Ben Amor (Moodle ID: 21):
-   - No courses assigned
+   - Course MATH401 room not in assignedRooms
+   - Course MATH402 room not in assignedRooms
 ⚠️  Fatma Trabelsi (Moodle ID: 14):
-   - No courses assigned
+   - Course MATH201 room not in assignedRooms
+   - Course MATH301 room not in assignedRooms
 ⚠️  Hatem Ferjani (Moodle ID: 32):
-   - No courses assigned
+   - Course PHYS401 room not in assignedRooms
+   - Course PHYS402 room not in assignedRooms
 ⚠️  Hind Ferchichi (Moodle ID: 15):
-   - No courses assigned
+   - Course CS302 room not in assignedRooms
 ⚠️  Ines Miled (Moodle ID: 26):
-   - No courses assigned
+   - Course BIO101 room not in assignedRooms
+   - Course BIO201 room not in assignedRooms
 ⚠️  Karim Gharbi (Moodle ID: 22):
-   - No courses assigned
+   - Course ECE201 room not in assignedRooms
 ⚠️  Leila Bouzid (Moodle ID: 19):
-   - No courses assigned
+   - Course MATH101 room not in assignedRooms
+   - Course MATH102 room not in assignedRooms
 ⚠️  Mohamed Ben Salah (Moodle ID: 16):
-   - No courses assigned
+   - Course ENG201 room not in assignedRooms
 ⚠️  Nabil Zouari (Moodle ID: 31):
-   - No courses assigned
+   - Course PHYS302 room not in assignedRooms
 ⚠️  Rani Rekik (Moodle ID: 17):
-   - No courses assigned
+   - Course PHYS101 room not in assignedRooms
 ⚠️  Rim Hammami (Moodle ID: 20):
-   - No courses assigned
+   - Course STAT201 room not in assignedRooms
 ⚠️  Sofiane Dridi (Moodle ID: 28):
-   - No courses assigned
+   - Course ECON301 room not in assignedRooms
+   - Course ECON302 room not in assignedRooms
 ⚠️  Sonia Khelifi (Moodle ID: 25):
-   - No courses assigned
+   - Course CHEM302 room not in assignedRooms
 ⚠️  Tarek Bouaziz (Moodle ID: 18):
-   - No courses assigned
+   - Course CHEM101 room not in assignedRooms
+   - Course CHEM201 room not in assignedRooms
 ⚠️  Wafa Jlassi (Moodle ID: 30):
-   - No courses assigned
+   - Course LANG201 room not in assignedRooms
+   - Course LANG301 room not in assignedRooms
 ⚠️  Youssef Mansouri (Moodle ID: 27):
-   - No courses assigned
+   - Course ECON101 room not in assignedRooms
 
 
 📋 SUMMARY
@@ -229,14 +288,14 @@ ROOT CAUSE ANALYSIS SUMMARY
 ═════════════════════════════════════════════════════════════
 
 FINDINGS:
-⚠️  20 professors have data inconsistencies
+⚠️  18 professors have data inconsistencies
 
-Total Professors: 21
-Total Courses: 15
-Total Sessions: 810
+Total Professors: 20
+Total Courses: 52
+Total Sessions: 1972
 
 Data Quality:
-- Courses with both IDs: 0
+- Courses with both IDs: 52
 - UID mismatches: 0
 - Unassigned courses: 0
 

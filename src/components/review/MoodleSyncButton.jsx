@@ -27,9 +27,9 @@ export default function MoodleSyncButton({ courseId, sessionId, students }) {
       onClick={handleSync}
       disabled={status === 'syncing' || status === 'done'}
       className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors
-        ${status === 'done'   ? 'bg-emerald-400/10 text-emerald-400 border border-emerald-500/30 cursor-default' :
-          status === 'error'  ? 'bg-red-400/10 text-red-400 border border-red-500/30' :
-          status === 'syncing'? 'opacity-60 cursor-not-allowed bg-surface-raised text-slate-400' :
+        ${status === 'done'    ? 'bg-green-50 text-green-700 border border-green-200 cursor-default' :
+          status === 'error'   ? 'bg-red-50 text-red-600 border border-red-200' :
+          status === 'syncing' ? 'opacity-60 cursor-not-allowed bg-surface-raised text-gray-400' :
           'bg-brand/10 text-brand border border-brand/30 hover:bg-brand/20'}`}
     >
       {status === 'syncing' && <RefreshCw size={15} className="animate-spin" />}

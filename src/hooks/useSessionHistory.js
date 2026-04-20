@@ -73,17 +73,31 @@ export function useSessionHistory(filters = {}) {
   const fbCombined = [...(fbById ?? []), ...(fbByUid ?? [])]
   const fbMap = Object.fromEntries(fbCombined.map(s => [s.id, s]))
 
-  let sessions = generated.map(s => {
-    const fb = fbMap[s.id]
-    if (!fb) return s
-    return {
-      ...s,
-      ...fb,
-      attendanceRate: (fb.attendanceRate != null && fb.attendanceRate > 0)
-        ? fb.attendanceRate
-        : s.attendanceRate,
-    }
-  })
+  const generatedIds = new Set(generated.map(s => s.id))
+
+  const enrichedGenerated = generated
+    .map(s => {
+      const fb = fbMap[s.id]
+      if (!fb) return s
+      return {
+        ...s,
+        ...fb,
+        attendanceRate: (fb.attendanceRate != null && fb.attendanceRate > 0)
+          ? fb.attendanceRate
+          : s.attendanceRate,
+      }
+    })
+    .filter(s => s.attendanceRate != null)
+
+  // Include Firebase-only past sessions (e.g. from assignLiveSession.mjs script)
+  const fbOnlySessions = fbCombined.filter(s =>
+    !generatedIds.has(s.id) &&
+    s.status === 'past' &&
+    s.attendanceRate != null
+  )
+
+  let sessions = [...enrichedGenerated, ...fbOnlySessions]
+    .sort((a, b) => b.date.localeCompare(a.date) || b.startTime.localeCompare(a.startTime))
 
   // Apply optional filters
   const { courseId, roomId, dateRange } = filters

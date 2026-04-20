@@ -5,6 +5,7 @@ import { ref, set, remove } from 'firebase/database'
 import { db } from '../firebase'
 import { useAttendance }    from '../hooks/useAttendance'
 import { useSession }       from '../hooks/useSession'
+import { useSensors }       from '../hooks/useSensors'
 import AttendanceTable      from '../components/review/AttendanceTable'
 import ReviewSummary        from '../components/review/ReviewSummary'
 import MoodleSyncButton     from '../components/review/MoodleSyncButton'
@@ -39,6 +40,7 @@ export default function AttendanceReview() {
   const navigate    = useNavigate()
   const { session }                           = useSession(roomId)
   const { enrolled, students, updateStudent } = useAttendance(roomId, session?.sessionId)
+  const { sensors }                           = useSensors(roomId)
   const [saving, setSaving] = useState(false)
 
   const handleValidateClose = async () => {
@@ -52,14 +54,12 @@ export default function AttendanceReview() {
       const attendanceRate = enrolled > 0 ? Math.round((present / enrolled) * 1000) / 10 : 0
       const now            = new Date()
 
-      // Determine session date and startTime from the ISO startTime stored in activeSession
       let date      = toDateStr(now)
       let startTime = toHHMM(now)
       if (session.startTime) {
         const start = new Date(session.startTime)
         if (!isNaN(start)) { date = toDateStr(start); startTime = toHHMM(start) }
         else if (typeof session.startTime === 'string' && session.startTime.includes(':')) {
-          // Already HH:MM
           startTime = session.startTime
         }
       }
@@ -83,6 +83,12 @@ export default function AttendanceReview() {
         attendanceRate,
         moodleSynced:   false,
         attendance: { enrolled, students: studentsMap },
+        envSummary: sensors ? {
+          temperature: sensors.temperature ?? null,
+          humidity:    sensors.humidity    ?? null,
+          air_quality: sensors.air_quality ?? null,
+          sound:       sensors.sound       ?? null,
+        } : null,
       }
 
       await set(ref(db, `/sessions/${session.sessionId}`), sessionDoc)
@@ -99,14 +105,14 @@ export default function AttendanceReview() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold text-slate-100">Attendance Review</h1>
-          <p className="text-sm text-slate-500 mt-0.5">{session?.courseName} · Room {roomId}</p>
+          <h1 className="text-xl font-semibold text-gray-800">Attendance Review</h1>
+          <p className="text-sm text-gray-400 mt-0.5">{session?.courseName} · Room {roomId}</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => exportCSV(students, session?.sessionId)}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-raised text-slate-300
-                       hover:text-slate-100 border border-surface-border text-sm transition-colors"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-raised text-gray-600
+                       hover:text-gray-800 border border-surface-border text-sm transition-colors"
           >
             <Download size={15} />
             CSV
@@ -120,8 +126,8 @@ export default function AttendanceReview() {
             onClick={handleValidateClose}
             disabled={saving}
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors
-                       bg-emerald-500/10 text-emerald-400 border border-emerald-500/30
-                       hover:bg-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                       bg-green-50 text-green-700 border border-green-200
+                       hover:bg-green-100 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <CheckCircle size={15} />
             {saving ? 'Saving…' : 'Validate & Close'}

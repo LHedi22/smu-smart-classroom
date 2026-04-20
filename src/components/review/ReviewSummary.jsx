@@ -5,10 +5,10 @@ export default function ReviewSummary({ enrolled, students }) {
 
   return (
     <div className="flex items-center gap-4 flex-wrap">
-      <Pill label="Present"  value={present} color="text-emerald-400" />
-      <Pill label="Absent"   value={absent}  color="text-red-400" />
+      <Pill label="Present"  value={present}    color="text-green-600" />
+      <Pill label="Absent"   value={absent}     color="text-red-500" />
       <Pill label="Rate"     value={`${rate}%`} color="text-brand" />
-      <Pill label="Enrolled" value={enrolled} color="text-slate-400" />
+      <Pill label="Enrolled" value={enrolled}   color="text-gray-500" />
     </div>
   )
 }
@@ -17,7 +17,7 @@ function Pill({ label, value, color }) {
   return (
     <div className="flex items-center gap-1.5">
       <span className={`text-lg font-bold ${color}`}>{value}</span>
-      <span className="text-xs text-slate-500">{label}</span>
+      <span className="text-xs text-gray-400">{label}</span>
     </div>
   )
 }
