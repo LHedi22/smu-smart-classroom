@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ref, onValue } from 'firebase/database'
+import { ref, get, onValue } from 'firebase/database'
 import { db } from '../firebase'
 import { useAuth } from '../context/AuthContext'
 import { getProfessorCourses, getProfessorSessions } from '../services/moodleApi'
@@ -39,6 +39,25 @@ function toHHMM(value) {
   return ''
 }
 
+function buildSlotsFromAssignedCourses(courses = [], todayName) {
+  return courses.flatMap(course =>
+    (course.schedule ?? [])
+      .filter(slot => slot.day === todayName)
+      .map(slot => ({
+        id: `${course.code ?? course.id}-${slot.starttime}`,
+        courseId: String(course.code ?? course.id ?? ''),
+        shortname: course.code ?? course.id ?? '',
+        fullname: course.name ?? course.fullname ?? course.code ?? course.id ?? '',
+        roomId: slot.room ?? course.room ?? '',
+        startTime: slot.starttime,
+        endTime: slot.endtime,
+        type: slot.type ?? 'Lecture',
+        status: computeStatus(slot.starttime, slot.endtime),
+        enrolled: course.enrolled ?? 0,
+      }))
+  )
+}
+
 export function useMoodleCourses() {
   const { profile: professor, user } = useAuth()
   const [courses, setCourses]           = useState([])
@@ -58,30 +77,61 @@ export function useMoodleCourses() {
     const load = async () => {
       try {
         setLoading(true)
-        const data = await getProfessorCourses(professor.moodleUserId)
+        const [flaskCourses, rtdbCoursesSnap] = await Promise.all([
+          getProfessorCourses(professor.moodleUserId),
+          get(ref(db, 'courses')),
+        ])
+
+        const rtdbCourses = rtdbCoursesSnap.val()
+          ? Object.entries(rtdbCoursesSnap.val())
+              .map(([id, value]) => ({ id, ...value }))
+              .filter(course =>
+                course?.professorUid === user?.uid ||
+                String(course?.professorId ?? '') === String(professor.moodleUserId)
+              )
+          : []
+
+        const coursesById = new Map()
+
+        for (const course of flaskCourses ?? []) {
+          coursesById.set(String(course.id ?? course.code ?? course.courseId), course)
+        }
+
+        for (const course of rtdbCourses) {
+          const key = String(course.code ?? course.id ?? course.courseId)
+          const existing = coursesById.get(key)
+          coursesById.set(key, existing ? { ...existing, ...course } : course)
+        }
+
+        const mergedCourses = [...coursesById.values()]
 
         // Today's slots for the home page schedule
-        const todaySlots = data
-          .flatMap(course =>
-            (course.schedule ?? [])
-              .filter(slot => slot.day === todayName)
-              .map(slot => ({
-                id:        `${course.id}-${slot.starttime}`,
-                courseId:  String(course.id),
-                shortname: course.shortname,
-                fullname:  course.fullname,
-                roomId:    slot.room,
-                startTime: slot.starttime,
-                endTime:   slot.endtime,
-                type:      slot.type,
-                status:    computeStatus(slot.starttime, slot.endtime),
-                enrolled:  course.enrolled ?? 0,  // from Flask StudentEnrollment count
-              }))
-          )
+        const todaySlots = mergedCourses
+          .flatMap(course => {
+            const scheduleSlots = buildSlotsFromAssignedCourses([course], todayName)
+            if (scheduleSlots.length > 0) return scheduleSlots
+
+            if (course.room && professor?.assignedRooms?.[course.room]) {
+              return [{
+                id: `${course.code ?? course.id ?? course.courseId}-assigned`,
+                courseId: String(course.code ?? course.id ?? course.courseId ?? ''),
+                shortname: course.code ?? course.shortname ?? course.id ?? '',
+                fullname: course.name ?? course.fullname ?? course.code ?? course.shortname ?? '',
+                roomId: course.room,
+                startTime: course.startTime ?? '00:00',
+                endTime: course.endTime ?? '00:00',
+                type: course.type ?? 'Lecture',
+                status: 'upcoming',
+                enrolled: course.enrolled ?? 0,
+              }]
+            }
+
+            return []
+          })
           .sort((a, b) => a.startTime.localeCompare(b.startTime))
 
         setCourses(todaySlots)
-        setTotalEnrolled(data.reduce((sum, c) => sum + (c.enrolled ?? 0), 0))
+        setTotalEnrolled(mergedCourses.reduce((sum, c) => sum + (c.enrolled ?? 0), 0))
 
         // Full semester sessions (S26) — generated server-side
         const sessions = await getProfessorSessions(professor.moodleUserId, 'S26')
@@ -95,7 +145,7 @@ export function useMoodleCourses() {
     }
 
     load()
-  }, [professor?.moodleUserId, todayName, user?.uid])
+  }, [professor?.moodleUserId, professor?.assignedRooms, todayName, user?.uid])
 
   // ── 2. Watch Firebase /classrooms for live session state ──────
   useEffect(() => {

@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
-import { ref, get } from 'firebase/database'
+import { useState, useEffect, useCallback } from 'react'
+import { ref, get, onValue } from 'firebase/database'
 import { db } from '../../firebase'
-import { assignCourseToProf, unassignCourseFromProf, reassignCourse } from '../../utils/transactionHelpers'
+import { assignCourseToProf, unassignCourseFromProf } from '../../utils/transactionHelpers'
 
 export default function AdminAssign() {
   const [professors, setProfessors] = useState([])
@@ -11,11 +11,23 @@ export default function AdminAssign() {
   const [message,    setMessage]    = useState('')
   const [error,      setError]      = useState('')
 
+  const loadData = useCallback(async () => {
+    const [ps, cs] = await Promise.all([get(ref(db, 'professors')), get(ref(db, 'courses'))])
+    setProfessors(ps.val() ? Object.entries(ps.val()).map(([uid, v]) => ({ uid, ...v })) : [])
+    setCourses(cs.val() ? Object.entries(cs.val()).map(([id, v]) => ({ id, ...v })) : [])
+  }, [])
+
   useEffect(() => {
-    Promise.all([get(ref(db, 'professors')), get(ref(db, 'courses'))]).then(([ps, cs]) => {
-      setProfessors(ps.val() ? Object.entries(ps.val()).map(([uid, v]) => ({ uid, ...v })) : [])
-      setCourses(cs.val()    ? Object.entries(cs.val()).map(([id, v])  => ({ id,  ...v })) : [])
+    const unsubProfs = onValue(ref(db, 'professors'), snap => {
+      setProfessors(snap.val() ? Object.entries(snap.val()).map(([uid, v]) => ({ uid, ...v })) : [])
     })
+    const unsubCourses = onValue(ref(db, 'courses'), snap => {
+      setCourses(snap.val() ? Object.entries(snap.val()).map(([id, v]) => ({ id, ...v })) : [])
+    })
+    return () => {
+      unsubProfs()
+      unsubCourses()
+    }
   }, [])
 
   async function assign(e) {
@@ -29,9 +41,9 @@ export default function AdminAssign() {
       
       // Use transaction for atomic assignment
       await assignCourseToProf(courseId, profUid, profMoodleId, room)
-      
       setMessage('✅ Course assigned successfully.')
       setSelected({ profUid: '', profMoodleId: '', courseId: '', room: '' })
+      await loadData()
     } catch (err) {
       setError(`❌ Assignment failed: ${err.message}`)
       console.error('Assignment error:', err)
@@ -50,10 +62,7 @@ export default function AdminAssign() {
     try {
       await unassignCourseFromProf(courseId, profUid)
       setMessage('✅ Course unassigned successfully.')
-      
-      // Reload courses
-      const cs = await get(ref(db, 'courses'))
-      setCourses(cs.val() ? Object.entries(cs.val()).map(([id, v]) => ({ id, ...v })) : [])
+      await loadData()
     } catch (err) {
       setError(`❌ Unassignment failed: ${err.message}`)
     } finally {

@@ -20,3 +20,6 @@ export const USE_MOCK_SESSIONS = IS_MOCK
 
 // Demo mode bypasses session-ownership check so a professor can open any room
 export const BYPASS_SESSION_OWNERSHIP = IS_DEMO
+
+// Dev/test bootstrap seeding toggle.
+export const SEED_ON_STARTUP = import.meta.env.VITE_SEED_ON_STARTUP === 'true'

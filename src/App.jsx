@@ -19,6 +19,15 @@ import AdminAssign      from './pages/admin/AdminAssign'
 import AdminDebugger    from './pages/admin/AdminDebugger'
 import ProfessorViewer  from './pages/admin/ProfessorViewer'
 import SystemHealth     from './pages/admin/SystemHealth'
+import AdminCommandCenter from './pages/admin/AdminCommandCenter'
+import AdminDrilldown from './pages/admin/AdminDrilldown'
+import AdminRoomControl from './pages/admin/AdminRoomControl'
+import AdminSessionTimeline from './pages/admin/AdminSessionTimeline'
+import AdminIncidents from './pages/admin/AdminIncidents'
+import AdminAttendanceIntelligence from './pages/admin/AdminAttendanceIntelligence'
+import AdminRuleEngine from './pages/admin/AdminRuleEngine'
+import AdminAuditLogs from './pages/admin/AdminAuditLogs'
+import AdminOpsHealth from './pages/admin/AdminOpsHealth'
 
 function ProfessorRoute({ children }) {
   const { status } = useAuth()
@@ -69,7 +78,16 @@ export default function App() {
 
             {/* Admin panel */}
             <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
-              <Route index          element={<ErrorBoundary label="Professors Admin"><AdminProfessors /></ErrorBoundary>} />
+              <Route index          element={<ErrorBoundary label="Command Center"><AdminCommandCenter /></ErrorBoundary>} />
+              <Route path="drilldown/*" element={<ErrorBoundary label="Drilldown"><AdminDrilldown /></ErrorBoundary>} />
+              <Route path="rooms/:roomId" element={<ErrorBoundary label="Room Control"><AdminRoomControl /></ErrorBoundary>} />
+              <Route path="sessions/:sessionId/timeline" element={<ErrorBoundary label="Session Timeline"><AdminSessionTimeline /></ErrorBoundary>} />
+              <Route path="incidents" element={<ErrorBoundary label="Incident Center"><AdminIncidents /></ErrorBoundary>} />
+              <Route path="attendance-intelligence" element={<ErrorBoundary label="Attendance Intelligence"><AdminAttendanceIntelligence /></ErrorBoundary>} />
+              <Route path="rules" element={<ErrorBoundary label="Rule Engine"><AdminRuleEngine /></ErrorBoundary>} />
+              <Route path="audit" element={<ErrorBoundary label="Audit Logs"><AdminAuditLogs /></ErrorBoundary>} />
+              <Route path="ops-health" element={<ErrorBoundary label="Ops Health"><AdminOpsHealth /></ErrorBoundary>} />
+              <Route path="professors" element={<ErrorBoundary label="Professors Admin"><AdminProfessors /></ErrorBoundary>} />
               <Route path="courses" element={<ErrorBoundary label="Courses Admin"><AdminCourses /></ErrorBoundary>} />
               <Route path="assign"  element={<ErrorBoundary label="Assignments"><AdminAssign /></ErrorBoundary>} />
               <Route path="health"  element={<ErrorBoundary label="System Health"><SystemHealth /></ErrorBoundary>} />

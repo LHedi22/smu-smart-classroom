@@ -8,7 +8,7 @@
  * - Courses with missing/invalid schedules
  */
 
-import { ref, get, update, remove, runTransaction } from 'firebase/database'
+import { ref, get, set, update, remove } from 'firebase/database'
 import { db } from '../firebase'
 
 /**
@@ -79,12 +79,12 @@ export async function fixProfessorRoomMismatches(mismatches) {
 
   for (const mismatch of mismatches) {
     try {
-      await update(
+      await set(
         ref(
           db,
           `professors/${mismatch.professorUid}/assignedRooms/${mismatch.room}`
         ),
-        { assigned: true, assignedAt: new Date().toISOString() }
+        true
       )
       results.fixed.push(
         `${mismatch.professorUid}/${mismatch.room}`
