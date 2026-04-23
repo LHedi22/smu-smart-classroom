@@ -1,10 +1,8 @@
 // src/hooks/useUpcomingSessions.js
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { getProfessorCourses } from '../services/moodleApi'
-import { generateSessions } from '../utils/generateSessions'
-
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
+import { getProfessorSessions } from '../services/moodleApi'
+import { USE_MOCK_SESSIONS as USE_MOCK } from '../config'
 
 function toDateStr(d) {
   const y = d.getFullYear()
@@ -27,7 +25,7 @@ const MOCK_UPCOMING = [
  * sorted by date/time ascending.
  */
 export function useUpcomingSessions() {
-  const { user, profile } = useAuth()
+  const { profile } = useAuth()
   const [sessions, setSessions] = useState([])
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState(null)
@@ -39,8 +37,7 @@ export function useUpcomingSessions() {
     const load = async () => {
       try {
         setLoading(true)
-        const courses = await getProfessorCourses(profile.moodleUserId)
-        const all = generateSessions(courses, profile.moodleUserId, 'S26')
+        const all = await getProfessorSessions(profile.moodleUserId, 'S26')
 
         const cutoff = new Date()
         cutoff.setDate(cutoff.getDate() + 14)

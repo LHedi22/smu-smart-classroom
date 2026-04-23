@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { ref, onValue } from 'firebase/database'
 import { db } from '../firebase'
 import { useAuth } from '../context/AuthContext'
-import { getProfessorCourses } from '../services/moodleApi'
-import { generateSessions } from '../utils/generateSessions'
+import { getProfessorCourses, getProfessorSessions } from '../services/moodleApi'
+import { USE_MOCK_SESSIONS as USE_MOCK } from '../config'
 
 const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
 
@@ -12,8 +12,6 @@ const MOCK_COURSES = [
   { id: 'MATH243-11:00', courseId: 'MATH243', shortname: 'MATH243', fullname: 'Discrete Mathematics',         roomId: 'C303', startTime: '11:00', endTime: '12:30', type: 'Lecture',  status: 'upcoming', enrolled: 30 },
   { id: 'ISS196-14:00',  courseId: 'ISS196',  shortname: 'ISS196',  fullname: 'Freshman Project',             roomId: 'B204', startTime: '14:00', endTime: '15:30', type: 'Tutorial', status: 'upcoming', enrolled: 28 },
 ]
-
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
 
 // Compute status for a slot that has no specific date (today only)
 function computeStatus(starttime, endtime) {
@@ -85,10 +83,9 @@ export function useMoodleCourses() {
         setCourses(todaySlots)
         setTotalEnrolled(data.reduce((sum, c) => sum + (c.enrolled ?? 0), 0))
 
-        // Full semester sessions (S26) for history / upcoming consumers
-        if (professor?.moodleUserId) {
-          setAllSessions(generateSessions(data, professor.moodleUserId, 'S26'))
-        }
+        // Full semester sessions (S26) — generated server-side
+        const sessions = await getProfessorSessions(professor.moodleUserId, 'S26')
+        setAllSessions(sessions)
       } catch (err) {
         console.error('[useMoodleCourses] Flask error:', err)
         setError(err)
@@ -107,16 +104,9 @@ export function useMoodleCourses() {
     const unsubs = Object.keys(professor.assignedRooms).map(roomId =>
       onValue(ref(db, `/classrooms/${roomId}/activeSession`), snap => {
         const value = snap.exists() ? snap.val() : null
-        const mine =
-          value &&
-          (
-            (value.professorUid && user?.uid && value.professorUid === user.uid) ||
-            (
-              value.professorId != null &&
-              professor?.moodleUserId != null &&
-              Number(value.professorId) === Number(professor.moodleUserId)
-            )
-          )
+        // Ownership is professorUid only — we control the write path now and
+        // every new activeSession carries it. No legacy professorId fallback.
+        const mine = value?.professorUid && user?.uid && value.professorUid === user.uid
         setRoomSessions(prev => ({
           ...prev,
           [roomId]: mine ? value : null,
@@ -125,7 +115,7 @@ export function useMoodleCourses() {
     )
 
     return () => unsubs.forEach(u => u())
-  }, [professor?.assignedRooms, professor?.moodleUserId, user?.uid])
+  }, [professor?.assignedRooms, user?.uid])
 
   const mockTotalEnrolled = MOCK_COURSES.reduce((s, c) => s + (c.enrolled ?? 0), 0)
   if (USE_MOCK) return { courses: MOCK_COURSES, allSessions: [], totalEnrolled: mockTotalEnrolled, loading: false, error: null }
@@ -133,18 +123,24 @@ export function useMoodleCourses() {
   // ── Merge schedule slots with owned live sessions from Firebase ─
   // If a room has an owned active session but no matching schedule slot for today,
   // inject it so the dashboard cards/stats are consistent.
-  const byRoom = new Map(courses.map(c => [c.roomId, c]))
-  const merged = [...courses]
+  //
+  // hasActiveSession disambiguates "clock says live" (scheduled window) from
+  // "Firebase says live" (the professor actually hit Start). The home-page
+  // SessionCard uses this to show "Join" vs "Start session".
+  const withFlag = courses.map(c => ({ ...c, hasActiveSession: false }))
+  const byRoom = new Map(withFlag.map(c => [c.roomId, c]))
+  const merged = [...withFlag]
 
   for (const [roomId, live] of Object.entries(roomSessions)) {
     if (!live) continue
-    const startTime = toHHMM(live.startTime) || '00:00'
-    const endTime = toHHMM(live.endTime) || ''
+    const startTime = toHHMM(live.scheduledStart ?? live.startTime) || '00:00'
+    const endTime = toHHMM(live.scheduledEnd ?? live.endTime) || ''
     const existing = byRoom.get(roomId)
 
     if (existing) {
       Object.assign(existing, {
         status: 'live',
+        hasActiveSession: true,
         courseId: live.courseId ?? existing.courseId,
         shortname: live.courseId ?? existing.shortname,
         fullname: live.courseName ?? existing.fullname,
@@ -162,6 +158,7 @@ export function useMoodleCourses() {
       endTime: endTime || startTime,
       type: live.type ?? 'Lecture',
       status: 'live',
+      hasActiveSession: true,
       enrolled: 0,
     })
   }

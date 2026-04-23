@@ -1,8 +1,35 @@
 // src/context/AuthContext.jsx
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { ref, get } from "firebase/database";
+import { ref, get, update } from "firebase/database";
 import { auth, db } from "../firebase";
+import { getProfessorCourses } from "../services/moodleApi";
+
+// Background sync: merge rooms from the Flask Schedule into profile.assignedRooms.
+// Fire-and-forget so it never blocks login. Manual admin-added rooms survive
+// (union, not replace). The write only happens if something changed so we don't
+// cause unnecessary profile re-renders on every login.
+async function syncAssignedRoomsFromSchedule(uid, profile) {
+  const moodleUserId = profile?.moodleUserId;
+  if (moodleUserId == null) return;
+  try {
+    const courses = await getProfessorCourses(moodleUserId);
+    const derived = {};
+    for (const c of courses ?? []) {
+      for (const s of c.schedule ?? []) {
+        if (s.room) derived[s.room] = true;
+      }
+    }
+    const current = profile.assignedRooms ?? {};
+    const merged = { ...current, ...derived };
+    const changed = Object.keys(merged).some(k => current[k] !== merged[k]);
+    if (changed) {
+      await update(ref(db, `/professors/${uid}`), { assignedRooms: merged });
+    }
+  } catch (err) {
+    console.warn("[AuthContext] Room sync skipped:", err?.message);
+  }
+}
 
 const AuthContext = createContext(null);
 
@@ -64,9 +91,12 @@ export function AuthProvider({ children }) {
           const profSnap = await getWithTimeout(`/professors/${firebaseUser.uid}`);
           if (profSnap.exists()) {
             console.log('✅ Professor detected:', firebaseUser.uid);
+            const profileData = profSnap.val();
             setUser(firebaseUser);
-            setProfile(profSnap.val());
+            setProfile(profileData);
             setIsAdmin(false);
+            // Background: keep assignedRooms in sync with the Flask Schedule.
+            syncAssignedRoomsFromSchedule(firebaseUser.uid, profileData);
             return;
           }
         } catch (err) {

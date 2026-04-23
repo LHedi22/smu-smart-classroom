@@ -1,13 +1,50 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MapPin, Users, ArrowRight, Radio } from 'lucide-react'
+import { MapPin, Users, ArrowRight, Radio, Play } from 'lucide-react'
 import Badge from '../shared/Badge'
+import { useSessionLifecycle } from '../../hooks/useSessionLifecycle'
+
+// How early a professor can start a scheduled session before its nominal time.
+// 15 minutes handles the common case where they want to prep before students arrive.
+const EARLY_START_WINDOW_MS = 15 * 60 * 1000
+
+function canStartEarly(course) {
+  if (course.status !== 'upcoming') return false
+  const [h, m] = course.startTime.split(':').map(Number)
+  const start = new Date()
+  start.setHours(h, m, 0, 0)
+  return start.getTime() - Date.now() <= EARLY_START_WINDOW_MS
+}
 
 export default function SessionCard({ course }) {
   const navigate = useNavigate()
+  const { startSession } = useSessionLifecycle()
+  const [starting, setStarting] = useState(false)
+  const [error, setError] = useState(null)
 
   const isDone = course.status === 'completed' || course.status === 'past'
   const badgeVariant = { live: 'live', upcoming: 'default', completed: 'good', past: 'good' }[course.status] ?? 'default'
   const badgeLabel   = { live: 'Live', upcoming: 'Upcoming', completed: 'Done', past: 'Done' }[course.status] ?? course.status
+
+  // Three navigation modes for a non-done card:
+  // - join: activeSession exists in Firebase → go straight to LiveSession
+  // - start: clock says live but nobody's hit Start → write activeSession, then go
+  // - open: scheduled in the future → just navigate (LiveSession will show a CTA)
+  const showJoin  = course.hasActiveSession
+  const showStart = !course.hasActiveSession && (course.status === 'live' || canStartEarly(course))
+
+  const handleStart = async (e) => {
+    e.stopPropagation()
+    setError(null)
+    setStarting(true)
+    try {
+      await startSession(course.roomId, course)
+      navigate(`/session/${course.roomId}`)
+    } catch (err) {
+      setError(err.message ?? 'Could not start session')
+      setStarting(false)
+    }
+  }
 
   return (
     <div className="card flex items-start gap-4 hover:border-brand/30 transition-colors">
@@ -25,16 +62,36 @@ export default function SessionCard({ course }) {
           <span className="flex items-center gap-1"><Users size={11} />{course.enrolled} students</span>
           <span className="font-mono">{course.startTime} – {course.endTime}</span>
         </div>
+        {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
       </div>
-      {!isDone && (
+
+      {!isDone && showJoin && (
         <button
           onClick={() => navigate(`/session/${course.roomId}`)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex-shrink-0
-            ${course.status === 'live'
-              ? 'bg-brand text-white hover:bg-brand-dark'
-              : 'bg-surface-raised text-gray-600 hover:bg-surface-border'}`}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex-shrink-0 bg-brand text-white hover:bg-brand-dark"
         >
-          {course.status === 'live' ? 'Join' : 'Open'}
+          Join
+          <ArrowRight size={14} />
+        </button>
+      )}
+
+      {!isDone && showStart && (
+        <button
+          onClick={handleStart}
+          disabled={starting}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex-shrink-0 bg-brand text-white hover:bg-brand-dark disabled:opacity-60"
+        >
+          <Play size={14} />
+          {starting ? 'Starting…' : 'Start'}
+        </button>
+      )}
+
+      {!isDone && !showJoin && !showStart && (
+        <button
+          onClick={() => navigate(`/session/${course.roomId}`)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex-shrink-0 bg-surface-raised text-gray-600 hover:bg-surface-border"
+        >
+          Open
           <ArrowRight size={14} />
         </button>
       )}

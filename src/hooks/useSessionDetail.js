@@ -2,8 +2,7 @@ import { ref } from 'firebase/database'
 import { useObjectVal } from 'react-firebase-hooks/database'
 import { db } from '../firebase'
 import { MOCK_SESSIONS } from '../data/mockSessions'
-
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
+import { USE_MOCK_SESSIONS as USE_MOCK } from '../config'
 
 export function useSessionDetail(sessionId, fallbackSession = null) {
   const [data, loading, error] = useObjectVal(

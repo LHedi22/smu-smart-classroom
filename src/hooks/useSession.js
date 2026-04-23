@@ -3,6 +3,8 @@ import { useObjectVal } from 'react-firebase-hooks/database'
 import { db } from '../firebase'
 import { useAuth } from '../context/AuthContext'
 import { hasRoomAccess, validateRoomId, logUnauthorizedAccess } from '../utils/roomAccess'
+import { USE_MOCK_SESSIONS, BYPASS_SESSION_OWNERSHIP } from '../config'
+import { isSessionStale } from './useSessionLifecycle'
 
 const MOCK_COURSES = {
   A101: { courseId: 'CS102',   courseName: 'Object Oriented Programming', startTime: '2026-04-02T09:00:00', status: 'live'     },
@@ -10,12 +12,9 @@ const MOCK_COURSES = {
   B204: { courseId: 'ISS196',  courseName: 'Freshman Project',             startTime: '2026-04-02T14:00:00', status: 'upcoming' },
 }
 
-const USE_MOCK    = import.meta.env.VITE_USE_MOCK    === 'true'
-const ALWAYS_LIVE = import.meta.env.VITE_ALWAYS_LIVE === 'true'
-
 export function useSession(roomId) {
   const { profile, user } = useAuth()
-  
+
   // Validate room ID format
   const { valid: roomIdValid, error: roomIdError } = validateRoomId(roomId)
   if (!roomIdValid) {
@@ -25,7 +24,7 @@ export function useSession(roomId) {
       error: new Error(`Invalid room ID: ${roomIdError}`)
     }
   }
-  
+
   // Check authorization: does professor have access to this room?
   if (!hasRoomAccess(profile, roomId)) {
     logUnauthorizedAccess(user?.uid, roomId, 'fetch_active_session', new Date().toISOString())
@@ -35,13 +34,13 @@ export function useSession(roomId) {
       error: new Error(`Not authorized to access room ${roomId}`)
     }
   }
-  
+
   // Authorization passed: fetch the data
   const [data, loading, error] = useObjectVal(
-    USE_MOCK ? null : ref(db, `classrooms/${roomId}/activeSession`)
+    USE_MOCK_SESSIONS ? null : ref(db, `classrooms/${roomId}/activeSession`)
   )
-  
-  if (USE_MOCK) {
+
+  if (USE_MOCK_SESSIONS) {
     const course = MOCK_COURSES[roomId] ?? { courseId: roomId, courseName: roomId, startTime: new Date().toISOString(), status: 'upcoming' }
     return {
       session: {
@@ -54,21 +53,24 @@ export function useSession(roomId) {
       error: null,
     }
   }
-  
+
+  // Ownership: professorUid is the single source of truth (P6). The write path
+  // (useSessionLifecycle.startSession) always sets this, and we cleaned up all
+  // legacy entries that only had professorId. A session without professorUid
+  // is treated as unowned (effectively invisible) rather than trusted.
   const sessionBelongsToProfessor =
-    data &&
-    (
-      (data.professorUid && user?.uid && data.professorUid === user.uid) ||
-      (
-        data.professorId != null &&
-        profile?.moodleUserId != null &&
-        Number(data.professorId) === Number(profile.moodleUserId)
-      )
-    )
+    data?.professorUid && user?.uid && data.professorUid === user.uid
 
-  if (sessionBelongsToProfessor) return { session: data, loading, error }
+  // Stale detection (P4): if expectedEndTime + grace has passed, don't surface
+  // the session — LiveSession will then render the Start CTA so the professor
+  // can recover. We deliberately don't auto-delete from a read hook; the next
+  // startSession overwrites it, or cleanup_stale_sessions.py prunes later.
+  if (sessionBelongsToProfessor && !isSessionStale(data)) {
+    return { session: data, loading, error }
+  }
 
-  if (ALWAYS_LIVE && !loading && hasRoomAccess(profile, roomId)) {
+  // Demo mode: bypass ownership check so a professor can open any assigned room
+  if (BYPASS_SESSION_OWNERSHIP && !loading && hasRoomAccess(profile, roomId)) {
     return {
       session: {
         sessionId:    `${roomId}-DEMO-${user?.uid ?? 'demo'}`,

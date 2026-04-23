@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { ref, onValue }        from 'firebase/database'
 import { useNavigate }         from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
+import { MapPin } from 'lucide-react'
+import { useAuth }             from '../../context/AuthContext'
 import { db }                  from '../../firebase'
-
-const ALWAYS_LIVE = import.meta.env.VITE_ALWAYS_LIVE === 'true'
+import { BYPASS_SESSION_OWNERSHIP } from '../../config'
 
 export default function RoomsGrid() {
   const { profile: professor, user } = useAuth()
@@ -17,16 +17,7 @@ export default function RoomsGrid() {
     const unsubs = Object.keys(professor.assignedRooms).map(roomId =>
       onValue(ref(db, `/classrooms/${roomId}/activeSession`), snap => {
         const value = snap.exists() ? snap.val() : null
-        const mine =
-          value &&
-          (
-            (value.professorUid && user?.uid && value.professorUid === user.uid) ||
-            (
-              value.professorId != null &&
-              professor?.moodleUserId != null &&
-              Number(value.professorId) === Number(professor.moodleUserId)
-            )
-          )
+        const mine = value?.professorUid && user?.uid && value.professorUid === user.uid
         setRoomStatuses(prev => ({
           ...prev,
           [roomId]: mine ? value : null,
@@ -35,17 +26,26 @@ export default function RoomsGrid() {
     )
 
     return () => unsubs.forEach(u => u())
-  }, [professor?.assignedRooms, professor?.moodleUserId, user?.uid])
+  }, [professor?.assignedRooms, user?.uid])
 
   const rooms = Object.keys(professor?.assignedRooms ?? {})
-  if (!rooms.length) return null
+
+  if (!rooms.length) return (
+    <div className="card flex flex-col items-center gap-3 py-8 text-center border-dashed">
+      <MapPin size={28} className="text-gray-300" />
+      <p className="text-gray-600 font-medium text-sm">No classrooms assigned yet</p>
+      <p className="text-xs text-gray-400 max-w-xs">
+        Contact your administrator to get rooms assigned to your account.
+      </p>
+    </div>
+  )
 
   return (
     <div className="card flex flex-col gap-3">
       <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider">My Rooms</p>
       <div className="grid grid-cols-2 gap-3">
         {rooms.map(roomId => {
-          const isLive = ALWAYS_LIVE || roomStatuses[roomId] != null
+          const isLive = BYPASS_SESSION_OWNERSHIP || roomStatuses[roomId] != null
           return (
             <button
               key={roomId}

@@ -1,3 +1,7 @@
+// Keys here MUST match what collector.py writes to Firebase
+// (see smu-flask/collector.py — it publishes temperature, co2, humidity).
+// The Pi publisher only emits these three; air_quality and sound were in
+// an earlier design and were dropped when the sensor hardware was scoped.
 export const SENSORS = [
   {
     key: 'temperature', label: 'Temperature', unit: '°C',
@@ -10,14 +14,9 @@ export const SENSORS = [
     status: v => v > 75 || v < 20 ? 'critical' : v > 60 || v < 30 ? 'warn' : 'good',
   },
   {
-    key: 'air_quality', label: 'CO₂', unit: 'ppm',
+    key: 'co2', label: 'CO₂', unit: 'ppm',
     min: 300, max: 1400,
     status: v => v > 1000 ? 'critical' : v > 700 ? 'warn' : 'good',
-  },
-  {
-    key: 'sound', label: 'Noise', unit: 'dB',
-    min: 20, max: 95,
-    status: v => v > 80 ? 'critical' : v > 65 ? 'warn' : 'good',
   },
 ]
 

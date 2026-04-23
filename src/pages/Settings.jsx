@@ -3,8 +3,7 @@ import { signOut } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 import { LogOut } from 'lucide-react'
 import { auth } from '../firebase'
-
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
+import { USE_MOCK_SESSIONS as USE_MOCK } from '../config'
 
 export default function Settings() {
   const navigate = useNavigate()

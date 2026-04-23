@@ -3,6 +3,27 @@ import { isSignInWithEmailLink, signInWithEmailLink } from 'firebase/auth'
 import { ref, get, set, remove } from 'firebase/database'
 import { useNavigate } from 'react-router-dom'
 import { auth, db } from '../firebase'
+import { getProfessorCourses } from '../services/moodleApi'
+
+// Union of (admin-typed rooms) ∪ (rooms derived from Flask course schedule).
+// Derived wins ties on presence: if the professor has a Schedule entry in
+// room A101, A101 is assigned regardless of what admin typed. Manual entries
+// survive for guest/temporary room overrides that don't exist in Schedule.
+async function deriveAssignedRooms(manualRooms, moodleUserId) {
+  const merged = { ...(manualRooms ?? {}) }
+  if (moodleUserId == null) return merged
+  try {
+    const courses = await getProfessorCourses(moodleUserId)
+    for (const c of courses ?? []) {
+      for (const s of c.schedule ?? []) {
+        if (s.room) merged[s.room] = true
+      }
+    }
+  } catch (err) {
+    console.warn('[FinishLogin] Could not derive rooms from Flask — using manual list only:', err?.message)
+  }
+  return merged
+}
 
 export default function FinishLogin() {
   const [message, setMessage] = useState('Signing you in…')
@@ -50,17 +71,21 @@ export default function FinishLogin() {
         const pendingSnap = await get(ref(db, `pendingProfessors/${emailKey}`))
 
         if (pendingSnap.exists()) {
+          const pendingData = pendingSnap.val()
+          const moodleUserId = pendingData.moodleUserId ?? null
+          const assignedRooms = await deriveAssignedRooms(pendingData.assignedRooms, moodleUserId)
+
           await set(ref(db, `professors/${user.uid}`), {
-            ...pendingSnap.val(),
+            ...pendingData,
+            assignedRooms,
             email:        user.email,
-            moodleUserId: pendingSnap.val().moodleUserId ?? null,
+            moodleUserId,
             createdAt:    new Date().toISOString(),
             settings: {
               thresholds: {
                 temperature: { warn: 26, critical: 32 },
                 humidity:    { warn: 60, critical: 75 },
-                air_quality: { warn: 700, critical: 1000 },
-                sound:       { warn: 65, critical: 80 },
+                co2:         { warn: 700, critical: 1000 },
               },
               notifications:            { inApp: true, email: true, push: false },
               attendanceWarnThreshold:  70,

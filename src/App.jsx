@@ -11,12 +11,14 @@ import SessionDetail    from './pages/SessionDetail'
 import StudentProfile   from './pages/StudentProfile'
 import Settings         from './pages/Settings'
 import LoadingSpinner   from './components/shared/LoadingSpinner'
+import ErrorBoundary    from './components/shared/ErrorBoundary'
 import AdminLayout      from './pages/admin/AdminLayout'
 import AdminProfessors  from './pages/admin/AdminProfessors'
 import AdminCourses     from './pages/admin/AdminCourses'
 import AdminAssign      from './pages/admin/AdminAssign'
 import AdminDebugger    from './pages/admin/AdminDebugger'
 import ProfessorViewer  from './pages/admin/ProfessorViewer'
+import SystemHealth     from './pages/admin/SystemHealth'
 
 function ProfessorRoute({ children }) {
   const { status } = useAuth()
@@ -48,31 +50,34 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          {/* Public */}
-          <Route path="/login"        element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
-          <Route path="/not-approved" element={<NotApproved />} />
+        <ErrorBoundary label="Application">
+          <Routes>
+            {/* Public */}
+            <Route path="/login"        element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
+            <Route path="/not-approved" element={<NotApproved />} />
 
-          {/* Professor dashboard */}
-          <Route path="/" element={<ProfessorRoute><AppShell /></ProfessorRoute>}>
-            <Route index                              element={<Home />} />
-            <Route path="session/:roomId"             element={<LiveSession />} />
-            <Route path="session/:roomId/review"      element={<AttendanceReview />} />
-            <Route path="history"                     element={<History />} />
-            <Route path="history/:sessionId"          element={<SessionDetail />} />
-            <Route path="student/:studentId"          element={<StudentProfile />} />
-            <Route path="settings"                    element={<Settings />} />
-          </Route>
+            {/* Professor dashboard */}
+            <Route path="/" element={<ProfessorRoute><AppShell /></ProfessorRoute>}>
+              <Route index                         element={<ErrorBoundary label="Dashboard"><Home /></ErrorBoundary>} />
+              <Route path="session/:roomId"        element={<ErrorBoundary label="Live Session"><LiveSession /></ErrorBoundary>} />
+              <Route path="session/:roomId/review" element={<ErrorBoundary label="Attendance Review"><AttendanceReview /></ErrorBoundary>} />
+              <Route path="history"                element={<ErrorBoundary label="Session History"><History /></ErrorBoundary>} />
+              <Route path="history/:sessionId"     element={<ErrorBoundary label="Session Detail"><SessionDetail /></ErrorBoundary>} />
+              <Route path="student/:studentId"     element={<ErrorBoundary label="Student Profile"><StudentProfile /></ErrorBoundary>} />
+              <Route path="settings"               element={<ErrorBoundary label="Settings"><Settings /></ErrorBoundary>} />
+            </Route>
 
-          {/* Admin panel */}
-          <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
-            <Route index          element={<AdminProfessors />} />
-            <Route path="courses" element={<AdminCourses />} />
-            <Route path="assign"  element={<AdminAssign />} />
-            <Route path="debugger" element={<AdminDebugger />} />
-            <Route path="viewer"  element={<ProfessorViewer />} />
-          </Route>
-        </Routes>
+            {/* Admin panel */}
+            <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+              <Route index          element={<ErrorBoundary label="Professors Admin"><AdminProfessors /></ErrorBoundary>} />
+              <Route path="courses" element={<ErrorBoundary label="Courses Admin"><AdminCourses /></ErrorBoundary>} />
+              <Route path="assign"  element={<ErrorBoundary label="Assignments"><AdminAssign /></ErrorBoundary>} />
+              <Route path="health"  element={<ErrorBoundary label="System Health"><SystemHealth /></ErrorBoundary>} />
+              <Route path="debugger" element={<AdminDebugger />} />
+              <Route path="viewer"  element={<ProfessorViewer />} />
+            </Route>
+          </Routes>
+        </ErrorBoundary>
       </AuthProvider>
     </BrowserRouter>
   )

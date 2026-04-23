@@ -7,8 +7,7 @@ import LoadingSpinner from '../components/shared/LoadingSpinner'
 import SensorCard from '../components/live/SensorCard'
 import { SENSORS } from '../utils/sensorStatus'
 import { useSessionDetail } from '../hooks/useSessionDetail'
-
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
+import { USE_MOCK_SESSIONS as USE_MOCK } from '../config'
 
 // Mirrors the fallback values in useSensors — shown when Firebase has no sensor payload for a room
 const ROOM_DEFAULTS = {

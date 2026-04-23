@@ -1,16 +1,18 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Download, CheckCircle } from 'lucide-react'
-import { ref, set, remove } from 'firebase/database'
+import { ref, set } from 'firebase/database'
 import { db } from '../firebase'
-import { useAttendance }    from '../hooks/useAttendance'
-import { useSession }       from '../hooks/useSession'
-import { useSensors }       from '../hooks/useSensors'
+import { useAttendance }         from '../hooks/useAttendance'
+import { useSession }            from '../hooks/useSession'
+import { useSensors }            from '../hooks/useSensors'
+import { useSessionCheckpoint }  from '../hooks/useSessionCheckpoint'
+import { useSessionLifecycle }   from '../hooks/useSessionLifecycle'
 import AttendanceTable      from '../components/review/AttendanceTable'
 import ReviewSummary        from '../components/review/ReviewSummary'
 import MoodleSyncButton     from '../components/review/MoodleSyncButton'
 
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
+import { USE_MOCK_SESSIONS } from '../config'
 
 function toHHMM(d) {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
@@ -41,11 +43,13 @@ export default function AttendanceReview() {
   const { session }                           = useSession(roomId)
   const { enrolled, students, updateStudent } = useAttendance(roomId, session?.sessionId)
   const { sensors }                           = useSensors(roomId)
+  const { clearCheckpoint }                   = useSessionCheckpoint(roomId, session?.sessionId, students, enrolled)
+  const { endSession }                        = useSessionLifecycle()
   const [saving, setSaving] = useState(false)
 
   const handleValidateClose = async () => {
-    if (!session?.sessionId || USE_MOCK) {
-      if (USE_MOCK) navigate('/history')
+    if (!session?.sessionId || USE_MOCK_SESSIONS) {
+      if (USE_MOCK_SESSIONS) navigate('/history')
       return
     }
     setSaving(true)
@@ -86,13 +90,13 @@ export default function AttendanceReview() {
         envSummary: sensors ? {
           temperature: sensors.temperature ?? null,
           humidity:    sensors.humidity    ?? null,
-          air_quality: sensors.air_quality ?? null,
-          sound:       sensors.sound       ?? null,
+          co2:         sensors.co2         ?? null,
         } : null,
       }
 
       await set(ref(db, `/sessions/${session.sessionId}`), sessionDoc)
-      await remove(ref(db, `/classrooms/${roomId}/activeSession`))
+      await endSession(roomId)
+      await clearCheckpoint()
       navigate('/history')
     } catch (err) {
       console.error('[AttendanceReview] Failed to save session:', err)
@@ -119,6 +123,7 @@ export default function AttendanceReview() {
           </button>
           <MoodleSyncButton
             courseId={session?.courseId}
+            moodleCourseId={session?.moodleCourseId}
             sessionId={session?.sessionId}
             students={students}
           />

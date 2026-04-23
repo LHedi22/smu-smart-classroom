@@ -1,23 +1,41 @@
 import { useState } from 'react'
 import { RefreshCw, CheckCircle, AlertCircle } from 'lucide-react'
+import { ref, update } from 'firebase/database'
+import { db } from '../../firebase'
 import api from '../../api'
+import { USE_MOCK_SESSIONS } from '../../config'
 
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
-
-export default function MoodleSyncButton({ courseId, sessionId, students }) {
+export default function MoodleSyncButton({ courseId, moodleCourseId, sessionId, students }) {
   const [status, setStatus] = useState('idle') // idle | syncing | done | error
+  const [errorMsg, setErrorMsg] = useState(null)
 
   const handleSync = async () => {
     setStatus('syncing')
-    if (USE_MOCK) {
+    setErrorMsg(null)
+
+    if (USE_MOCK_SESSIONS) {
       setTimeout(() => setStatus('done'), 1200)
       return
     }
+
     try {
       const records = students.map(s => ({ studentId: s.id, present: s.present }))
-      await api.post('/api/moodle/attendance/sync', { courseId, sessionId, records })
+      const res = await api.post('/api/moodle/attendance/sync', {
+        courseId,
+        moodleCourseId,
+        sessionId,
+        records,
+      })
+
+      // Write moodleSynced flag back to the session record in Firebase
+      if (sessionId) {
+        await update(ref(db, `/sessions/${sessionId}`), { moodleSynced: true })
+      }
+
       setStatus('done')
-    } catch {
+      return res.data
+    } catch (err) {
+      setErrorMsg(err?.response?.data?.message ?? 'Sync failed')
       setStatus('error')
     }
   }
@@ -36,7 +54,10 @@ export default function MoodleSyncButton({ courseId, sessionId, students }) {
       {status === 'done'    && <CheckCircle size={15} />}
       {status === 'error'   && <AlertCircle size={15} />}
       {status === 'idle'    && <RefreshCw size={15} />}
-      {status === 'syncing' ? 'Syncing…' : status === 'done' ? 'Synced to Moodle' : status === 'error' ? 'Sync failed — retry' : 'Sync to Moodle'}
+      {status === 'syncing' ? 'Syncing…'
+        : status === 'done'    ? 'Synced to Moodle'
+        : status === 'error'   ? (errorMsg ?? 'Sync failed — retry')
+        : 'Sync to Moodle'}
     </button>
   )
 }

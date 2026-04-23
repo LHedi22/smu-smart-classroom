@@ -2,7 +2,30 @@
   "permissions": {
     "allow": [
       "Bash(venv/Scripts/python app.py)",
-      "Bash(venv/Scripts/python -c ' *)"
+      "Bash(venv/Scripts/python -c ' *)",
+      "Bash(npm list *)",
+      "Bash(pip show *)",
+      "Bash(C:/Users/lenovo/smu-flask/venv/Scripts/pip show *)",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('C:/Users/lenovo/smu-flask/collector.py'\\).read\\(\\)\\); print\\('collector.py parses OK'\\)\")",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('C:/Users/lenovo/smu-flask/app.py'\\).read\\(\\)\\); print\\('app.py parses OK'\\)\")",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('C:/Users/lenovo/smu-flask/models.py'\\).read\\(\\)\\); print\\('models.py parses OK'\\)\")",
+      "Bash(python -c \"import sqlite3; c = sqlite3.connect\\(r'C:/Users/lenovo/smu-flask/instance/smu_moodle.db'\\); cur = c.cursor\\(\\); cur.execute\\(\\\\\"SELECT name FROM sqlite_master WHERE type='table'\\\\\"\\); print\\('TABLES:', cur.fetchall\\(\\)\\)\")",
+      "Bash(python -c \"import sqlite3, os; p = r'C:/Users/lenovo/smu-flask/instance/app.db'; print\\('app.db exists:', os.path.exists\\(p\\)\\)\")",
+      "Bash(python -m py_compile \"C:/Users/lenovo/smu-flask/pi-publisher/publisher.py\")",
+      "Bash(python -m py_compile \"C:/Users/lenovo/smu-flask/scripts/seed_sensor_shape.py\")",
+      "Bash(python scripts/seed_sensor_shape.py --help)",
+      "Bash(npm run *)",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_console_messages",
+      "mcp__plugin_playwright_playwright__browser_snapshot",
+      "mcp__plugin_playwright_playwright__browser_close",
+      "Bash(kill b062iatod *)",
+      "Bash(python -c ' *)",
+      "Bash(venv/Scripts/python.exe scripts/standardize_room_shape.py --dry-run)",
+      "Bash(venv/Scripts/python.exe scripts/standardize_room_shape.py)",
+      "Bash(curl -s http://127.0.0.1:5000/api/rooms)",
+      "Bash(venv/Scripts/python.exe -c \"import ast; ast.parse\\(open\\('pi-publisher/publisher.py', encoding='utf-8'\\).read\\(\\)\\); print\\('publisher.py: syntax OK'\\)\")",
+      "Bash(venv/Scripts/python.exe -c \"import ast; ast.parse\\(open\\('scripts/standardize_room_shape.py', encoding='utf-8'\\).read\\(\\)\\); print\\('standardize_room_shape.py: syntax OK'\\)\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\lenovo\\smu-flask"

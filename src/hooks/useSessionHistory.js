@@ -4,11 +4,9 @@ import { ref, query, orderByChild, equalTo } from 'firebase/database'
 import { useListVals } from 'react-firebase-hooks/database'
 import { db } from '../firebase'
 import { useAuth } from '../context/AuthContext'
-import { getProfessorCourses } from '../services/moodleApi'
-import { generateSessions } from '../utils/generateSessions'
+import { getProfessorSessions } from '../services/moodleApi'
 import { MOCK_SESSIONS } from '../data/mockSessions'
-
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
+import { USE_MOCK_SESSIONS as USE_MOCK } from '../config'
 
 /**
  * Returns all past sessions for the logged-in professor.
@@ -31,13 +29,9 @@ export function useSessionHistory(filters = {}) {
     const load = async () => {
       try {
         setGenLoading(true)
-        const courses = await getProfessorCourses(profile.moodleUserId)
+        const all = await getProfessorSessions(profile.moodleUserId, 'S26,F25')
 
-        // Collect past sessions across both active semesters
-        const s26 = generateSessions(courses, profile.moodleUserId, 'S26')
-        const f25 = generateSessions(courses, profile.moodleUserId, 'F25')
-
-        const past = [...s26, ...f25]
+        const past = all
           .filter(s => s.status === 'past')
           .sort((a, b) =>
             b.date.localeCompare(a.date) || b.startTime.localeCompare(a.startTime)

@@ -33,8 +33,7 @@ function buildMockAttendance({ count, prefix, presentCount, startHour }) {
   }
 }
 
-const USE_MOCK    = import.meta.env.VITE_USE_MOCK    === 'true'
-const ALWAYS_LIVE = import.meta.env.VITE_ALWAYS_LIVE === 'true'
+import { USE_MOCK_SESSIONS, IS_DEMO } from '../config'
 
 export function useAttendance(roomId, sessionId) {
   const { profile, user } = useAuth()
@@ -65,21 +64,21 @@ export function useAttendance(roomId, sessionId) {
 
   // Authorization passed: fetch the data
   const [data, loading, error] = useObjectVal(
-    USE_MOCK ? null : ref(db, `classrooms/${roomId}/attendance/${sessionId}`)
+    USE_MOCK_SESSIONS ? null : ref(db, `classrooms/${roomId}/attendance/${sessionId}`)
   )
 
   const updateStudent = (studentId, changes) => {
-    if (USE_MOCK) return Promise.resolve()
+    if (USE_MOCK_SESSIONS) return Promise.resolve()
     return update(
       ref(db, `classrooms/${roomId}/attendance/${sessionId}/students/${studentId}`),
       changes
     )
   }
 
-  const mockData = (USE_MOCK || (ALWAYS_LIVE && !loading && !data))
+  const mockData = (USE_MOCK_SESSIONS || (IS_DEMO && !loading && !data))
     ? buildMockAttendance(MOCK_ATTENDANCE_CONFIG[roomId] ?? MOCK_ATTENDANCE_CONFIG.B204)
     : null
-  const source = USE_MOCK ? mockData : (ALWAYS_LIVE && !data ? mockData : data)
+  const source = USE_MOCK_SESSIONS ? mockData : (IS_DEMO && !data ? mockData : data)
   const students = source?.students
     ? Object.entries(source.students).map(([id, v]) => ({ id, ...v }))
     : []
@@ -87,8 +86,8 @@ export function useAttendance(roomId, sessionId) {
   return {
     enrolled: source?.enrolled ?? 0,
     students,
-    loading: USE_MOCK ? false : loading,
-    error:   USE_MOCK ? null  : error,
+    loading: USE_MOCK_SESSIONS ? false : loading,
+    error:   USE_MOCK_SESSIONS ? null  : error,
     updateStudent,
   }
 }

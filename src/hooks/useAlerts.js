@@ -1,6 +1,7 @@
 import { ref } from 'firebase/database'
 import { useObjectVal } from 'react-firebase-hooks/database'
 import { db } from '../firebase'
+import { USE_MOCK_SESSIONS as USE_MOCK } from '../config'
 
 const MOCK_ALERTS = {
   A101: {
@@ -11,7 +12,6 @@ const MOCK_ALERTS = {
   C303: {},
   B204: {},
 }
-const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
 
 export function useAlerts(roomId) {
   const [data, loading, error] = useObjectVal(

@@ -32,6 +32,7 @@ export default function AdminLayout() {
             { to: '/admin',          label: 'Professors', end: true },
             { to: '/admin/courses',  label: 'Courses' },
             { to: '/admin/assign',   label: 'Assignments' },
+            { to: '/admin/health',   label: 'System Health' },
             { to: '/admin/viewer',   label: '👁️ View Professor' },
             { to: '/admin/debugger', label: '🔍 Debugger' },
           ].map(({ to, label, end }) => (
